@@ -1,0 +1,8 @@
+.env*
+/node_modules
+.env.local
+/.env.development.local
+/.env.test.local
+/.next/
+/.next/cache/
+.DS_Store
