@@ -113,7 +113,7 @@ export default function ProfilePage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-white">EpochEra Profile</h1>
       </div>
 
-      <div className="w-full flex flex-col md:flex-row gap-4 md:gap-6 items-center bg-gradient-to-br from-zinc-800 to-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6">
+      <div className="w-full flex flex-col md:flex-row gap-4 md:gap-6 items-center bg-gradient-to-br from-zinc-800/50 to-zinc-950/50 border border-zinc-800 rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6">
         {/* Profile Info Card - Left */}
         <div className="w-full md:flex-1 flex flex-col gap-3 md:gap-4">
           {/* Address Section */}

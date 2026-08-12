@@ -1,7 +1,7 @@
-# EpochEra Coin User Frontend
+# EpochEra Platform User Frontend
 
 ## Overview
-This is the **USER-ONLY** frontend for the EpochEra Coin platform. This application is designed for regular users to manage their EpochEra Coin investments, transactions, and account activities.
+This is the **USER-ONLY** frontend for the EpochEra platform. This application is designed for regular users to manage their Epoch token investments, transactions, and account activities.
 
 ## Access Control
 - **USER ACCESS ONLY**: Only users with USER role can access this frontend
@@ -12,7 +12,7 @@ This is the **USER-ONLY** frontend for the EpochEra Coin platform. This applicat
 ## Features
 - User Registration & Authentication
 - User Dashboard
-- Buy EpochEra Coin
+- Buy Epoch Tokens
 - Wallet Management
 - Transaction History
 - Referral System
@@ -38,3 +38,4 @@ This is the **USER-ONLY** frontend for the EpochEra Coin platform. This applicat
 - All admin-related functionality has been removed
 - Only user authentication and user features are available
 - Attempting to access with admin credentials will result in access denial
+- EpochEra is the platform name, Epoch is the token name

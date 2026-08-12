@@ -25,7 +25,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex">
+    <div className="min-h-screen bg-background text-zinc-100 flex">
       {/* Sidebar - Fixed on all screens */}
       <div className="fixed inset-y-0 left-0 z-30 w-64 hidden lg:block">
         <Sidebar />
@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }) {
       {/* Main content wrapper */}
       <div className="flex-1 flex flex-col lg:ml-64">
         {/* Header - Fixed at top */}
-        <header className="fixed top-0 right-0 left-0 lg:left-64 z-20 bg-zinc-800/40 backdrop-blur-sm border-b border-zinc-800">
+        <header className="fixed top-0 right-0 left-0 lg:left-64 z-20 bg-background/40 backdrop-blur-sm border-b border-zinc-800">
           <div className="h-16 flex items-center px-6">
             <Header />
           </div>

@@ -7,7 +7,7 @@ import { headers } from 'next/headers'
 
 export const metadata = {
   title: "EpochEra | Decentralized Prediction Protocol on TON",
-  description: "Powering the future of decentralized predictions on Telegram. Mine, purchase, and build with EpochEra - the next-generation TON Prediction Protocol.",
+  description: "Powering the future of decentralized predictions on Telegram. Mine, purchase, and build with Epoch tokens on the EpochEra platform - the next-generation TON Prediction Protocol.",
   alternates: {
     canonical: '/'
   },

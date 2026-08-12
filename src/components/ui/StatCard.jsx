@@ -1,15 +1,15 @@
 import React from 'react';
 import Card from '@/components/ui/Card';
 
-const StatCard = ({ icon, label, value }) => {
+const StatCard = ({ icon, label, value, className = '' }) => {
   return (
-    <Card className="p-6 flex items-center gap-4">
-      <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+    <Card variant="secondary" className={`p-6 flex items-center gap-4 ${className}`}>
+      <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg">
         {icon}
       </div>
-      <div>
-        <div className="text-2xl font-bold text-white">{value}</div>
-        <div className="text-zinc-400 text-sm">{label}</div>
+      <div className="flex-1">
+        <div className="text-3xl font-bold text-white tracking-tight">{value}</div>
+        <div className="text-slate-400 text-sm mt-1">{label}</div>
       </div>
     </Card>
   );

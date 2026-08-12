@@ -2,7 +2,7 @@
   "name": "epochera",
   "version": "1.0.6",
   "private": true,
-  "description": "EpochEra Coin - User dashboard and trading platform",
+  "description": "EpochEra Platform - User dashboard and trading platform for Epoch tokens",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --webpack",

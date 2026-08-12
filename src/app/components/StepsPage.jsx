@@ -57,7 +57,7 @@ export default function StepsPage() {
       step: "06",
       icon: RefreshCw,
       title: "Token Supply Governance",
-      description: "Manage a fixed 10 billion EpochEra supply with a transparent, predictable halving schedule spanning 84 years.",
+      description: "Manage a fixed 20 billion EpochEra supply with a transparent, predictable halving schedule spanning 84 years.",
       delay: 1.0,
       color: "from-indigo-400 to-yellow-500"
     }

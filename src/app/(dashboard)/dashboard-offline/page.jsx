@@ -11,7 +11,7 @@ import OverviewSection from "@/components/dashboard/OverviewSection";
 export default function Dashboard() {
 
     return (
-        <div className="space-y-4 sm:space-y-6 md:space-y-8 bg-zinc-950 min-h-screen ">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8 bg-background min-h-screen ">
             {/* Overview Section */}
             <OverviewSection  />
 

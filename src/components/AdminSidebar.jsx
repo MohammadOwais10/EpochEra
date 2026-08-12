@@ -26,7 +26,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 h-screen bg-gradient-to-b from-zinc-900 to-zinc-950 border-r border-zinc-800 flex flex-col sticky top-0">
+    <aside className="w-64 h-screen bg-gradient-to-b from-[#162138]/80 to-[#392236]/80 backdrop-blur-xl border-r border-zinc-800 flex flex-col sticky top-0">
       <div className="p-6">
         <Link href="/" className="flex items-center gap-2">
           <img src="/logo.png" alt="EpochEra" className="w-10 h-10" />
@@ -44,7 +44,7 @@ export function AdminSidebar() {
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-gradient-to-r from-[#EBD197] to-[#B48811] text-zinc-950'
-                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                  : 'text-zinc-400 hover:bg-[#162138] hover:text-white'
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -57,7 +57,7 @@ export function AdminSidebar() {
       <div className="p-4 border-t border-zinc-800">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-colors text-sm font-medium"
+          className="flex items-center gap-3 w-full px-4 py-3 text-zinc-400 hover:text-white hover:bg-[#162138] rounded-xl transition-colors text-sm font-medium"
         >
           <LogOut className="w-5 h-5" />
           Logout

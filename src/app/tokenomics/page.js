@@ -32,68 +32,69 @@ export default function Tokenomics() {
   };
 
   const distributionData = [
-    { label: "Presale", value: 40, color: "#EBD197", icon: Coins, tokens: "400M", description: "Early supporters allocation" },
-    { label: "Liquidity Pool", value: 25, color: "#B48811", icon: Globe, tokens: "250M", description: "DEX liquidity provision" },
-    { label: "Marketing", value: 15, color: "#BB9B49", icon: TrendingUp, tokens: "150M", description: "Growth and partnerships" },
-    { label: "Team", value: 10, color: "#F97316", icon: Shield, tokens: "100M", description: "Team and advisors" },
-    { label: "Development", value: 5, color: "#EF4444", icon: Zap, tokens: "50M", description: "R&D and innovation" },
-    { label: "Community", value: 5, color: "#DC2626", icon: Award, tokens: "50M", description: "Rewards and airdrops" },
+    { label: "Ecosystem & Liquidity Rewards", value: 30, color: "#EBD197", icon: Coins, tokens: "6B", description: "Emitted programmatically over 48 months based on market activity" },
+    { label: "Public Token Generation Event", value: 20, color: "#B48811", icon: Globe, tokens: "4B", description: "100% unlocked at launch to ensure wide initial token distribution" },
+    { label: "Community Growth & Marketing", value: 28, color: "#BB9B49", icon: TrendingUp, tokens: "5.6B", description: "Released dynamically to fund viral campaigns and developer grants" },
+    { label: "Strategic Private Round", value: 12, color: "#F97316", icon: Shield, tokens: "2.4B", description: "6-month cliff, followed by a linear monthly release over 18 months" },
+    { label: "Ecosystem Reserve & Treasury", value: 10, color: "#DC2626", icon: Award, tokens: "2B", description: "Governed by long-term staking locks for unexpected systemic events" },
   ];
 
   const utilityItems = [
     { icon: Flame, title: "Prediction Staking", desc: "Stake tokens to participate in markets and earn rewards for accurate predictions", percentage: 25, color: "#EBD197" },
     { icon: Shield, title: "Governance Rights", desc: "Vote on platform decisions, feature proposals, and parameter adjustments", percentage: 15, color: "#B48811" },
     { icon: Globe, title: "Fee Discounts", desc: "Reduced platform fees for token holders when creating or participating in markets", percentage: 20, color: "#BB9B49" },
-    { icon: Zap, title: "Liquidity Mining", desc: "Earn additional tokens by providing liquidity to EpochEra trading pairs", percentage: 15, color: "#F97316" },
+    { icon: Zap, title: "Liquidity Mining", desc: "Earn additional tokens by providing liquidity to Epoch trading pairs", percentage: 15, color: "#F97316" },
     { icon: Award, title: "Telegram Premium", desc: "Access exclusive features and enhanced prediction tools within Telegram", percentage: 10, color: "#EF4444" },
     { icon: TrendingUp, title: "Revenue Sharing", desc: "Receive a share of platform revenue through automated reward distribution", percentage: 15, color: "#DC2626" },
   ];
 
   const vestingData = [
-    { phase: "Presale Tokens", unlock: "TGE", lock: "No vesting", color: "#EBD197", percentage: 100, icon: Timer },
-    { phase: "Liquidity Pool", unlock: "TGE", lock: "Locked permanently", color: "#B48811", percentage: 100, icon: Lock },
-    { phase: "Team & Advisors", unlock: "12-month cliff", lock: "24-month linear vesting", color: "#BB9B49", percentage: 20, icon: Shield },
-    { phase: "Marketing & Dev", unlock: "TGE", lock: "18-month linear vesting", color: "#F97316", percentage: 30, icon: TrendingUp },
-    { phase: "Community Rewards", unlock: "Monthly", lock: "Based on engagement", color: "#EF4444", percentage: 50, icon: Award },
+    { phase: "Public Token Generation Event", unlock: "TGE", lock: "100% unlocked at launch", color: "#B48811", percentage: 100, icon: Timer },
+    { phase: "Ecosystem & Liquidity Rewards", unlock: "Programmatic", lock: "Emitted over 48 months based on market activity", color: "#EBD197", percentage: 100, icon: Zap },
+    { phase: "Strategic Private Round", unlock: "6-month cliff", lock: "Linear monthly release over 18 months", color: "#F97316", percentage: 100, icon: Shield },
+    { phase: "Community Growth & Marketing", unlock: "Dynamic", lock: "Released based on campaign needs", color: "#BB9B49", percentage: 100, icon: TrendingUp },
+    { phase: "Ecosystem Reserve & Treasury", unlock: "Governed", lock: "Long-term staking locks for systemic events", color: "#DC2626", percentage: 100, icon: Lock },
   ];
 
   const vestingScheduleData = [
-    { month: "TGE", presale: 400, liquidity: 250, marketing: 150, team: 0, dev: 0, community: 0 },
-    { month: "Month 6", presale: 400, liquidity: 250, marketing: 50, team: 0, dev: 10, community: 20 },
-    { month: "Month 12", presale: 400, liquidity: 250, marketing: 100, team: 0, dev: 20, community: 40 },
-    { month: "Month 18", presale: 400, liquidity: 250, marketing: 150, team: 25, dev: 30, community: 60 },
-    { month: "Month 24", presale: 400, liquidity: 250, marketing: 150, team: 50, dev: 40, community: 80 },
-    { month: "Month 30", presale: 400, liquidity: 250, marketing: 150, team: 75, dev: 50, community: 100 },
-    { month: "Month 36", presale: 400, liquidity: 250, marketing: 150, team: 100, dev: 50, community: 120 },
+    { month: "TGE", public: 4000, ecosystem: 0, private: 0, community: 0, treasury: 0 },
+    { month: "Month 6", public: 4000, ecosystem: 750, private: 0, community: 0, treasury: 0 },
+    { month: "Month 12", public: 4000, ecosystem: 1500, private: 400, community: 0, treasury: 0 },
+    { month: "Month 18", public: 4000, ecosystem: 2250, private: 800, community: 0, treasury: 0 },
+    { month: "Month 24", public: 4000, ecosystem: 3000, private: 1200, community: 0, treasury: 0 },
+    { month: "Month 30", public: 4000, ecosystem: 3750, private: 1600, community: 0, treasury: 0 },
+    { month: "Month 36", public: 4000, ecosystem: 4500, private: 2000, community: 0, treasury: 0 },
+    { month: "Month 48", public: 4000, ecosystem: 6000, private: 2400, community: 5600, treasury: 2000 },
   ];
 
   const revenueModelData = [
-    { source: "Platform Fees", amount: 450000, percentage: 45, color: "#EBD197", icon: PieChart },
-    { source: "Staking Rewards", amount: 300000, percentage: 30, color: "#B48811", icon: Award },
-    { source: "Token Burn", amount: 150000, percentage: 15, color: "#BB9B49", icon: Flame },
-    { source: "Treasury", amount: 100000, percentage: 10, color: "#F97316", icon: Wallet },
+    { source: "Platform Fees", amount: 9000000, percentage: 45, color: "#EBD197", icon: PieChart },
+    { source: "Staking Rewards", amount: 6000000, percentage: 30, color: "#B48811", icon: Award },
+    { source: "Token Burn", amount: 3000000, percentage: 15, color: "#BB9B49", icon: Flame },
+    { source: "Treasury", amount: 2000000, percentage: 10, color: "#F97316", icon: Wallet },
   ];
 
   const tokenBurnData = [
-    { month: "Month 1", burn: 50000, circulating: 950000 },
-    { month: "Month 3", burn: 150000, circulating: 850000 },
-    { month: "Month 6", burn: 300000, circulating: 700000 },
-    { month: "Month 12", burn: 500000, circulating: 500000 },
-    { month: "Month 18", burn: 650000, circulating: 350000 },
-    { month: "Month 24", burn: 750000, circulating: 250000 },
-    { month: "Month 36", burn: 850000, circulating: 150000 },
+    { month: "Month 1", burn: 1000000, circulating: 19000000000 },
+    { month: "Month 3", burn: 3000000, circulating: 17000000000 },
+    { month: "Month 6", burn: 6000000, circulating: 14000000000 },
+    { month: "Month 12", burn: 10000000, circulating: 10000000000 },
+    { month: "Month 18", burn: 13000000, circulating: 7000000000 },
+    { month: "Month 24", burn: 15000000, circulating: 5000000000 },
+    { month: "Month 36", burn: 17000000, circulating: 3000000000 },
   ];
 
   const stats = [
-    { label: "Total Supply", value: "1B", icon: Coins },
-    { label: "Network", value: "TBA", icon: Globe },
-    { label: "Token Type", value: "ERC-20", icon: Shield },
-    { label: "Contract", value: "TBA", icon: Lock },
+    { label: "Token Name", value: "Epoch", icon: Coins },
+    { label: "Total Supply", value: "20B", icon: Coins },
+    { label: "Network", value: "TON", icon: Globe },
+    { label: "Token Type", value: "Jetton", icon: Shield },
+
   ];
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 overflow-x-hidden">
+      <div className="min-h-screen bg-background overflow-x-hidden">
         <div className="fixed top-0 w-full backdrop-blur-md bg-gradient-to-r from-[#EBD197]/90 via-[#B48811]/90 to-[#BB9B49]/90 shadow-lg text-white py-2 text-center font-semibold font-mono z-40 px-2">
           <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl whitespace-normal sm:whitespace-nowrap px-1 sm:px-4">
             Powering the Future of Decentralized Predictions on Telegram
@@ -109,13 +110,7 @@ export default function Tokenomics() {
         >
           {/* Hero Section - Matching Home Page Style */}
           <motion.div variants={itemVariants} className="relative min-h-screen flex items-center justify-center px-4 pt-24 pb-20 overflow-hidden">
-            {/* Animated Background matching home page */}
-            <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#EBD197]/5 via-transparent to-blue-500/5" />
-              <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#EBD197]/10 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#B48811]/10 rounded-full blur-3xl animate-pulse delay-1000" />
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#A2790D]/5 rounded-full blur-3xl" />
-            </div>
+           
             
             <div className="max-w-7xl mx-auto relative z-10 w-full">
               <div className="text-center space-y-8">
@@ -177,7 +172,7 @@ export default function Tokenomics() {
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-[#EBD197]/20 to-[#B48811]/20 rounded-3xl blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative bg-zinc-800/50 backdrop-blur-xl border border-zinc-700/50 rounded-3xl p-8 hover:border-[#B48811]/50 transition-all duration-500">
-                    <ResponsiveContainer width="100%" height={800}>
+                    <ResponsiveContainer width="100%" height={700}>
                       <RechartsPieChart>
                         <Pie
                           data={distributionData}
@@ -213,7 +208,7 @@ export default function Tokenomics() {
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="text-center">
-                        <div className="text-4xl font-bold text-white mb-1">1B</div>
+                        <div className="text-4xl font-bold text-white mb-1">20B</div>
                         <div className="text-xs text-gray-400">Total Supply</div>
                       </div>
                     </div>
@@ -347,12 +342,12 @@ export default function Tokenomics() {
                       <AreaChart data={vestingScheduleData}>
                         <defs>
                           <linearGradient id="colorPresale" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#EBD197" stopOpacity={0.6}/>
-                            <stop offset="95%" stopColor="#EBD197" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#B48811" stopOpacity={0.6}/>
+                            <stop offset="95%" stopColor="#B48811" stopOpacity={0}/>
                           </linearGradient>
                           <linearGradient id="colorTeam" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#BB9B49" stopOpacity={0.6}/>
-                            <stop offset="95%" stopColor="#BB9B49" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#EBD197" stopOpacity={0.6}/>
+                            <stop offset="95%" stopColor="#EBD197" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" opacity={0.5} />
@@ -367,11 +362,11 @@ export default function Tokenomics() {
                             boxShadow: "0 10px 40px rgba(0,0,0,0.3)"
                           }}
                         />
-                        <Area type="monotone" dataKey="presale" stackId="1" stroke="#EBD197" fillOpacity={1} fill="url(#colorPresale)" name="Presale" />
-                        <Area type="monotone" dataKey="team" stackId="1" stroke="#BB9B49" fillOpacity={1} fill="url(#colorTeam)" name="Team" />
-                        <Area type="monotone" dataKey="marketing" stackId="1" stroke="#F97316" fillOpacity={0.7} fill="#F97316" name="Marketing" />
-                        <Area type="monotone" dataKey="dev" stackId="1" stroke="#EF4444" fillOpacity={0.7} fill="#EF4444" name="Development" />
-                        <Area type="monotone" dataKey="community" stackId="1" stroke="#DC2626" fillOpacity={0.7} fill="#DC2626" name="Community" />
+                        <Area type="monotone" dataKey="public" stackId="1" stroke="#B48811" fillOpacity={1} fill="url(#colorPresale)" name="Public TGE" />
+                        <Area type="monotone" dataKey="ecosystem" stackId="1" stroke="#EBD197" fillOpacity={1} fill="url(#colorTeam)" name="Ecosystem" />
+                        <Area type="monotone" dataKey="private" stackId="1" stroke="#F97316" fillOpacity={0.7} fill="#F97316" name="Private Round" />
+                        <Area type="monotone" dataKey="community" stackId="1" stroke="#BB9B49" fillOpacity={0.7} fill="#BB9B49" name="Community" />
+                        <Area type="monotone" dataKey="treasury" stackId="1" stroke="#DC2626" fillOpacity={0.7} fill="#DC2626" name="Treasury" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -500,7 +495,7 @@ export default function Tokenomics() {
                             color: "#fff",
                             boxShadow: "0 10px 40px rgba(0,0,0,0.3)"
                           }}
-                          formatter={(value) => [`${(value / 1000).toFixed(0)}K`, ""]}
+                          formatter={(value) => [`${(value / 1000000).toFixed(0)}M`, ""]}
                         />
                         <Area type="monotone" dataKey="burn" stroke="#EBD197" fillOpacity={1} fill="url(#colorBurn)" name="Tokens Burned" />
                         <Line type="monotone" dataKey="circulating" stroke="#B48811" strokeWidth={3} name="Circulating Supply" dot={{ fill: "#B48811" }} />

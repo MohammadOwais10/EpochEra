@@ -64,7 +64,7 @@ const Sidebar = () => {
   }, []);
 
   const SidebarContent = useCallback(({ showClose = false }) => (
-    <div className="flex flex-col h-full bg-gradient-to-bl from-zinc-800 to-zinc-900">
+    <div className="flex flex-col h-full bg-gradient-to-bl from-[#162138]/80 to-[#392236]/80 backdrop-blur-xl">
       {/* Header */}
       <div className="flex items-center justify-between p-4 sm:p-6">
         <Link href="/" className="flex items-center group gap-2">
@@ -75,7 +75,7 @@ const Sidebar = () => {
         {showClose && (
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 rounded-lg hover:bg-zinc-800 lg:hidden transition-colors"
+            className="p-2 rounded-lg hover:bg-[#162138] lg:hidden transition-colors"
             aria-label="Close menu"
           >
             <X className="w-6 h-6 text-white" />
@@ -94,8 +94,8 @@ const Sidebar = () => {
               onClick={handleMenuClick}
               className={`flex items-center px-3 py-2.5 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-zinc-900   text-yellow-400'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                  ? 'bg-[#392236]   text-yellow-400'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#162138]'
               }`}
             >
               <div className={`relative w-8 h-8 flex items-center justify-center ${
@@ -115,7 +115,7 @@ const Sidebar = () => {
       {/* Footer */}
       {address && (
       <div className="p-3 border-t border-zinc-800">
-        <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 rounded-2xl p-3 flex items-center justify-between">
+        <div className="bg-gradient-to-br from-[#162138] to-[#392236] rounded-2xl p-3 flex items-center justify-between">
           <div className="flex items-center min-w-0">
             <div className="w-2 h-2 bg-green-500 rounded-full mr-2 flex-shrink-0" />
             <span className="text-xs text-zinc-300 font-mono truncate" title={address}>
@@ -125,7 +125,7 @@ const Sidebar = () => {
           <button
             onClick={handleCopyAddress}
             aria-label={isCopied ? 'Copied!' : 'Copy address'}
-            className="ml-2 p-1.5 rounded-md hover:bg-zinc-700 transition-colors flex-shrink-0"
+            className="ml-2 p-1.5 rounded-md hover:bg-[#162138] transition-colors flex-shrink-0"
           >
             {isCopied ? (
               <Check className="w-4 h-4 text-green-400" />
@@ -143,20 +143,20 @@ const Sidebar = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-zinc-900/80 backdrop-blur-sm text-white rounded-lg shadow-lg hover:bg-zinc-800 transition-colors border border-zinc-800"
+        className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-[#162138]/80 backdrop-blur-sm text-white rounded-lg shadow-lg hover:bg-[#392236]/80 transition-colors border border-zinc-800"
         aria-label="Open menu"
       >
         <Menu className="w-5 h-5" />
       </button>
 
       <div
-        className={`fixed inset-0 z-50 bg-zinc-900/80 backdrop-blur-sm transform transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-50 bg-[#162138]/80 backdrop-blur-sm transform transition-opacity duration-300 lg:hidden ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsOpen(false)}
       >
         <div 
-          className={`fixed inset-y-0 left-0 w-72 bg-zinc-900 border-r border-zinc-800 transform transition-transform duration-300 ${
+          className={`fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#162138] to-[#392236] border-r border-zinc-800 transform transition-transform duration-300 ${
             isOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -165,7 +165,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 h-screen sticky top-0">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 h-screen fixed top-0 left-0 z-40">
         <SidebarContent />
       </aside>
     </>

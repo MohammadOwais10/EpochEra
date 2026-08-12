@@ -65,12 +65,12 @@ function HomePage() {
     {
       icon: Pickaxe,
       title: "Mine & Earn",
-      description: "Register your account, activate your affiliate account, and head to the Task Portal. Complete daily social tasks, check-ins, and educational activities to start mining EpochEra for free."
+      description: "Register your account, activate your affiliate account, and head to the Task Portal. Complete daily social tasks, check-ins, and educational activities to start mining Epoch tokens for free."
     },
     {
       icon: TrendingUp,
       title: "Amplify via Presale",
-      description: "Secure early-stage EpochEra tokens at the lowest valuation before public exchange listings. Use your referral dashboard to invite your community and collect dual-currency rewards."
+      description: "Secure early-stage Epoch tokens at the lowest valuation before public exchange listings. Use your referral dashboard to invite your community and collect dual-currency rewards."
     },
     {
       icon: Rocket,
@@ -83,17 +83,11 @@ function HomePage() {
     <>
 
   
-      <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 overflow-x-hidden">
+      <div className="min-h-screen bg-background overflow-x-hidden">
         
         {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center px-4 pt-24 pb-20 overflow-hidden">
-          {/* Animated Background */}
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#EBD197]/5 via-transparent to-blue-500/5" />
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#EBD197]/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#B48811]/10 rounded-full blur-3xl animate-pulse delay-1000" />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#A2790D]/5 rounded-full blur-3xl" />
-          </div>
+       
 
           <motion.div 
             className="relative max-w-7xl mx-auto z-10 w-full"
@@ -117,7 +111,7 @@ function HomePage() {
               
               {/* Description */}
               <motion.p variants={itemVariants} className="text-lg sm:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
-                Fund the next-generation TON Prediction Protocol. Complete daily micro-tasks to mine EpochEra or purchase tokens in our presale and earn instantly via our multi-tier referral network.
+                Fund the next-generation TON Prediction Protocol. Complete daily micro-tasks to mine Epoch tokens or purchase tokens in our presale and earn instantly via our multi-tier referral network.
               </motion.p>
               
               {/* CTA Buttons */}
@@ -128,7 +122,7 @@ function HomePage() {
                   className="w-full sm:w-auto px-10 py-5 text-xl rounded-full hover:scale-105 transition-transform shadow-2xl shadow-[#B48811]/20"
                   onClick={handleCTAClick}
                 >
-                  Buy EpochEra Presale
+                  Buy Epoch Presale
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button
@@ -182,7 +176,7 @@ function HomePage() {
                   <div className="w-20 h-20 bg-gradient-to-br from-[#EBD197]/20 to-[#B48811]/20 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
                     <Zap className="h-10 w-10 text-[#EBD197]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Native TON Blockchain Engine</h3>
+                  <h3 className="text-2xl font-bold text-white mb-4">Native TON Blockchain</h3>
                   <p className="text-gray-400 leading-relaxed">
                     Built for 900M+ Telegram users. Seamless 1-click prediction markets directly inside Telegram Mini Apps without external wallet friction.
                   </p>
@@ -366,48 +360,48 @@ function HomePage() {
               transition={{ duration: 0.7 }}
             >
               {/* Animated Grid Background */}
-              <div className="absolute inset-0 opacity-30">
+              <div className="absolute inset-0 opacity-10">
                 <div className="absolute inset-0" style={{
                   backgroundImage: `
-                    linear-gradient(rgba(235, 209, 151, 0.08) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(235, 209, 151, 0.08) 1px, transparent 1px)
+                    linear-gradient(#392236 1px, transparent 1px),
+                    linear-gradient(90deg, #392236 1px, transparent 1px)
                   `,
                   backgroundSize: '40px 40px'
                 }} />
               </div>
 
               {/* Glow Effects */}
-              <div className="absolute top-0 right-0 w-96 h-96 bg-[#EBD197]/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B48811]/10 rounded-full blur-3xl" />
+              <div className="absolute top-0 right-0 w-96 h-96 bg-[#392236] rounded-full blur-3xl opacity-30" />
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#162138] rounded-full blur-3xl opacity-30" />
 
-              <div className="relative bg-gradient-to-br from-zinc-900/95 via-zinc-800/95 to-zinc-900/95 backdrop-blur-xl border border-zinc-700/50 rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative bg-gradient-to-br from-[#162138] via-[#392236] to-[#162138] border border-[#392236] rounded-3xl overflow-hidden shadow-2xl">
                 {/* Top Gradient Bar */}
-                <div className="h-1 bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#EBD197] animate-gradient" />
+                <div className="h-1 bg-gradient-to-r from-[#392236] via-[#162138] to-[#392236]" />
                 
                 {/* Header Section */}
-                <div className="p-8 md:p-12 border-b border-zinc-700/50 bg-zinc-800/30">
+                <div className="p-8 md:p-12 border-b border-[#392236] bg-gradient-to-r from-[#162138] via-[#392236] to-[#162138]">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <div className="flex items-center gap-4">
                       <div className="relative">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#EBD197] to-[#B48811] rounded-2xl flex items-center justify-center shadow-xl shadow-[#B48811]/40">
-                          <Rocket className="w-8 h-8 text-white" />
+                        <div className="w-16 h-16 bg-gradient-to-br from-[#392236] to-[#162138] rounded-2xl flex items-center justify-center shadow-xl shadow-[#392236]/40">
+                          <Rocket className="w-8 h-8 text-[#EBD197]" />
                         </div>
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-zinc-900 animate-pulse" />
-                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-[#EBD197] rounded-full border-2 border-zinc-900 animate-pulse delay-75" />
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#162138] animate-pulse" />
+                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-[#EBD197] rounded-full border-2 border-[#162138] animate-pulse delay-75" />
                       </div>
                       <div>
                         <h3 className="text-2xl md:text-3xl font-bold text-white">TON Prediction Protocol</h3>
-                        <p className="text-sm text-gray-400 mt-1">Next-Gen Decentralized Prediction Platform</p>
+                        <p className="text-sm text-gray-300 mt-1">Next-Gen Decentralized Prediction Platform</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="px-4 py-2 bg-[#EBD197]/10 border border-[#EBD197]/30 rounded-full hover:bg-[#EBD197]/20 transition-colors cursor-pointer">
+                      <div className="px-4 py-2 bg-[#162138]/50 border border-[#392236] rounded-full hover:bg-[#392236]/50 transition-colors cursor-pointer">
                         <span className="text-[#EBD197] text-sm font-medium flex items-center gap-2">
                           <span className="w-2 h-2 bg-[#EBD197] rounded-full animate-pulse" />
                           Live on TON
                         </span>
                       </div>
-                      <div className="px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full hover:bg-green-500/20 transition-colors cursor-pointer">
+                      <div className="px-4 py-2 bg-green-900/30 border border-green-500/50 rounded-full hover:bg-green-900/50 transition-colors cursor-pointer">
                         <span className="text-green-400 text-sm font-medium flex items-center gap-2">
                           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                           Operational
@@ -418,7 +412,7 @@ function HomePage() {
                 </div>
 
                 {/* Platform Status */}
-                <div className="p-6 border-b border-zinc-700/50 bg-zinc-900/40">
+                <div className="p-6 border-b border-[#392236] bg-gradient-to-r from-[#392236] via-[#162138] to-[#392236]">
                   <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
@@ -427,15 +421,15 @@ function HomePage() {
                     <div className="flex items-center gap-6 text-sm">
                       <div className="flex items-center gap-2">
                         <Shield className="w-4 h-4 text-[#EBD197]" />
-                        <span className="text-gray-400">Audited Smart Contracts</span>
+                        <span className="text-gray-300">Audited Smart Contracts</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {/* <Lock className="w-4 h-4 text-[#EBD197]" /> */}
-                        <span className="text-gray-400">Secure by Design</span>
+                        <span className="text-gray-300">Secure by Design</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4 text-[#EBD197]" />
-                        <span className="text-gray-400">Global Access</span>
+                        <span className="text-gray-300">Global Access</span>
                       </div>
                     </div>
                   </div>
@@ -472,24 +466,24 @@ function HomePage() {
                     ].map((feature, index) => (
                       <motion.div
                         key={index}
-                        className="group relative bg-zinc-800/40 border border-zinc-700/50 rounded-2xl p-6 hover:border-[#B48811]/60 transition-all duration-300 overflow-hidden"
+                        className="group relative bg-gradient-to-br from-[#162138]/80 via-[#392236]/80 to-[#162138]/80 border border-[#392236] rounded-2xl p-6 hover:border-[#162138] transition-all duration-300 overflow-hidden"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: index * 0.1 }}
                         whileHover={{ 
                           y: -8,
-                          boxShadow: '0 25px 50px rgba(180, 136, 17, 0.2)',
+                          boxShadow: '0 25px 50px rgba(22, 33, 56, 0.4)',
                           transition: { duration: 0.3 }
                         }}
                       >
                         {/* Background Gradient on Hover */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#EBD197]/5 to-[#B48811]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#392236] to-[#162138] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         
                         {/* Progress Bar */}
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-zinc-700 rounded-t-2xl overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-[#162138] rounded-t-2xl overflow-hidden">
                           <motion.div 
-                            className="h-full bg-gradient-to-r from-[#EBD197] to-[#B48811]"
+                            className="h-full bg-gradient-to-r from-[#392236] to-[#162138]"
                             initial={{ width: 0 }}
                             whileInView={{ width: `${feature.progress}%` }}
                             viewport={{ once: true }}
@@ -499,22 +493,22 @@ function HomePage() {
 
                         <div className="relative z-10">
                           <div className="flex items-start gap-4 mb-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197]/20 to-[#B48811]/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:from-[#EBD197]/30 group-hover:to-[#B48811]/30 transition-colors group-hover:scale-110 duration-300">
+                            <div className="w-12 h-12 bg-gradient-to-br from-[#392236] to-[#162138] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:from-[#162138] group-hover:to-[#392236] transition-colors group-hover:scale-110 duration-300 border border-[#392236]">
                               <feature.icon className="w-6 h-6 text-[#EBD197]" />
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between mb-1">
                                 <h4 className="text-lg font-semibold text-white">{feature.title}</h4>
-                                <span className="text-xs px-2 py-1 bg-[#EBD197]/20 text-[#EBD197] rounded-full border border-[#EBD197]/30">{feature.badge}</span>
+                                <span className="text-xs px-2 py-1 bg-[#392236] text-[#EBD197] rounded-full border border-[#392236]">{feature.badge}</span>
                               </div>
-                              <p className="text-sm text-gray-400">{feature.description}</p>
+                              <p className="text-sm text-gray-300">{feature.description}</p>
                             </div>
                           </div>
 
                           {/* Tech Stack */}
                           <div className="flex gap-2 mt-4">
                             {['TON', 'Smart Contract', 'DeFi'].map((tech, i) => (
-                              <span key={i} className="text-xs px-2 py-1 bg-zinc-700/50 text-gray-300 rounded hover:bg-zinc-700 transition-colors cursor-default">
+                              <span key={i} className="text-xs px-2 py-1 bg-[#162138]/50 text-[#EBD197] border border-[#392236] rounded hover:bg-[#392236]/50 transition-colors cursor-default">
                                 {tech}
                               </span>
                             ))}
@@ -526,17 +520,17 @@ function HomePage() {
                 </div>
 
                 {/* Bottom CTA Section */}
-                <div className="p-8 md:p-12 bg-gradient-to-r from-zinc-800/50 via-zinc-900/50 to-zinc-800/50 border-t border-zinc-700/50">
+                <div className="p-8 md:p-12 bg-gradient-to-r from-[#162138] via-[#392236] to-[#162138] border-t border-[#392236]">
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
                       <h4 className="text-xl font-bold text-white mb-2">Ready to Experience the Future?</h4>
-                      <p className="text-gray-400">Join thousands of users already predicting on TON</p>
+                      <p className="text-gray-300">Join thousands of users already predicting on TON</p>
                     </div>
                     <div className="flex gap-4">
                       <Button
                         variant="primary"
                         size="lg"
-                        className="px-8 py-4 rounded-xl hover:scale-105 transition-transform shadow-xl shadow-[#B48811]/30"
+                        className="px-8 py-4 rounded-xl hover:scale-105 transition-transform shadow-xl shadow-[#392236]/30"
                         onClick={handleCTAClick}
                       >
                         Get Started
@@ -545,7 +539,7 @@ function HomePage() {
                       <Button
                         variant="outline"
                         size="lg"
-                        className="px-8 py-4 rounded-xl border-zinc-600 text-gray-300 hover:bg-zinc-700/50 hover:border-zinc-500 transition-all"
+                        className="px-8 py-4 rounded-xl border-[#392236] text-[#EBD197] hover:bg-[#162138]/50 hover:border-[#392236] transition-all"
                       >
                         Learn More
                       </Button>

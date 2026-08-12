@@ -47,7 +47,7 @@ function Scene3D() {
           {/* Floating Coins */}
           <FloatingCoins position={[-6, 2, -4]} scale={0.6} text="EpochEra" />
           <FloatingCoins position={[6, -1, -2]} scale={0.4} text="BTC" />
-          <FloatingCoins position={[0, 4, -6]} scale={0.5} text="ETH" />
+          <FloatingCoins position={[0, 4, -6]} scale={0.5} text="TON" />
           <FloatingCoins position={[-4, -3, 1]} scale={0.3} text="USD" />
 
           {/* Controls */}

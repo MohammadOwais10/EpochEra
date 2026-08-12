@@ -5,10 +5,10 @@ export default function Terms() {
   return (
     <>
       <Head>
-        <title>Terms of Service - EpochEra</title>
-        <meta name="description" content="Terms of Service for EpochEra platform" />
+        <title>Terms of Service - EpochEra Platform</title>
+        <meta name="description" content="Terms of Service for EpochEra platform and Epoch tokens" />
       </Head>
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="bg-backgrounds min-h-screen">
         <div className="fixed top-0 w-full backdrop-blur-md bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] shadow-lg text-white py-2 text-center font-semibold font-mono z-40 px-2">
           <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl whitespace-normal sm:whitespace-nowrap px-1 sm:px-4">
             Powering the Future of Decentralized Predictions on Telegram
@@ -17,19 +17,19 @@ export default function Terms() {
         <Navigation />
         <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 sm:p-8 md:p-12">
+            <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-6 sm:p-8 md:p-12">
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6 text-center">
                 Terms of Service
               </h1>
 
               <p className="text-[#EBD197] font-semibold mb-6">
-                PLEASE READ THESE TERMS OF SERVICE CAREFULLY BEFORE USING THE EpochEra PLATFORM.
+                PLEASE READ THESE TERMS OF SERVICE CAREFULLY BEFORE USING THE EpochEra PLATFORM OR INTERACTING WITH EPOCH TOKENS.
               </p>
 
               <div className="space-y-6 text-gray-400 leading-relaxed">
                 <div>
                   <h4 className="text-white font-semibold mb-2">1. Acceptance of Terms</h4>
-                  <p className="text-sm">By accessing or using the EpochEra platform, website, or services (collectively, the "Services"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Services. These Terms constitute a legally binding agreement between you and EpochEra.</p>
+                  <p className="text-sm">By accessing or using the EpochEra platform, website, or services (collectively, the "Services"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Services. These Terms constitute a legally binding agreement between you and EpochEra. EpochEra is the platform name and Epoch is the token name.</p>
                 </div>
 
                 <div>
@@ -53,8 +53,8 @@ export default function Terms() {
                 </div>
 
                 <div>
-                  <h4 className="text-white font-semibold mb-2">6. Token Ownership and Transactions</h4>
-                  <p className="text-sm">You acknowledge that all token transactions are recorded on a public blockchain and are irreversible. You are the sole owner of tokens in your wallet and are responsible for all transactions initiated from your wallet. EpochEra does not guarantee the value, liquidity, or marketability of any tokens. Token purchases are non-refundable except as required by applicable law.</p>
+                  <h4 className="text-white font-semibold mb-2">6. Epoch Token Ownership and Transactions</h4>
+                  <p className="text-sm">You acknowledge that all Epoch token transactions are recorded on a public blockchain and are irreversible. You are the sole owner of tokens in your wallet and are responsible for all transactions initiated from your wallet. EpochEra does not guarantee the value, liquidity, or marketability of any tokens. Token purchases are non-refundable except as required by applicable law.</p>
                 </div>
 
                 <div>
@@ -115,7 +115,7 @@ export default function Terms() {
               </div>
 
               <div className="mt-8 pt-6 border-t border-zinc-800 text-center text-zinc-500 text-sm">
-                <p>Last Updated: August 2025</p>
+                <p>Last Updated: August 2026</p>
               </div>
             </div>
           </div>

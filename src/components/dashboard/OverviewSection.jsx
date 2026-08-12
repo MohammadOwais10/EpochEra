@@ -75,7 +75,7 @@ export default function OverviewSection() {
                 <CardBox
                     icon={<Coins />}
                     title="Total Supply"
-                    value={totalSupply ? `${(Number(formatEther(totalSupply)) / 1000000000).toFixed(2)} B` : 'Loading...'}
+                    value="20B"
                 />
 
                 <CardBox

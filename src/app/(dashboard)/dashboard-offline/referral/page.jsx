@@ -64,7 +64,7 @@ export default function ReferralPage() {
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6 md:space-y-8 bg-zinc-950">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 bg-background">
       {/* Top Section */}
       <div className="grid grid-cols-1 gap-4 sm:gap-6">
      

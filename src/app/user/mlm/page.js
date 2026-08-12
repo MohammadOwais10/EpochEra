@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { getMySponsor, getMyDirectReferrals, getMlmStatistics } from '@/lib/api'
+import { Users, UserPlus, DollarSign, Mail, User, Building2, TrendingUp, X } from 'lucide-react'
+import Card from '@/components/ui/Card'
 
 export default function MlmPage() {
   const router = useRouter()
@@ -33,51 +36,263 @@ export default function MlmPage() {
     fetchData()
   }, [router])
 
-  if (loading) return <div className="p-8 text-white">Loading...</div>
-  if (error) return <div className="p-8 text-red-400">{error}</div>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#B48811]/30 border-t-[#EBD197] rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading MLM data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white flex items-center justify-center">
+        <Card className="p-8 max-w-md text-center">
+          <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Users className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Error Loading Data</h2>
+          <p className="text-slate-400 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl text-white font-medium hover:opacity-90 transition-opacity"
+          >
+            Try Again
+          </button>
+        </Card>
+      </div>
+    )
+  }
 
   return (
-    <div className="p-8 text-white">
-      <h1 className="text-3xl font-bold mb-6">MLM / Referrals</h1>
-
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <p className="text-zinc-400 text-sm">Direct Referrals</p>
-          <p className="text-2xl font-bold mt-2">{stats?.directReferralsCount ?? direct.length}</p>
-        </div>
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <p className="text-zinc-400 text-sm">Total Team</p>
-          <p className="text-2xl font-bold mt-2">{stats?.totalTeamCount ?? '0'}</p>
-        </div>
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <p className="text-zinc-400 text-sm">Total Earnings</p>
-          <p className="text-2xl font-bold mt-2">{stats?.totalEarnings ?? '0'}</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+      {/* Professional Background Effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#B48811]/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#B48811]/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#B48811]/2 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTM2IDM0djItaC0ydjJoLTJvLTJoLTJvLTJoLTJ2MmgydjJoMnYtMmgydi0yaDJ2LTJoLTJ2LTJoLTJvLTJoLTJ2MmgydjJoLTJ2LTJoLTJvLTJoLTJ2MmgydjJoMnYtMmgydi0yaDJ2LTJoLTJ6bTAgMmgydjJoLTJ2LTJoLTJ6bTAgMmgydjJoLTJ2LTJoLTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
       </div>
 
-      <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6 mb-8">
-        <h2 className="text-xl font-bold mb-2">Sponsor</h2>
-        {sponsor ? (
-          <p className="text-zinc-300">{sponsor.email}</p>
-        ) : (
-          <p className="text-zinc-500">No sponsor found.</p>
-        )}
-      </div>
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Professional Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">MLM / Referrals</h1>
+                <p className="text-slate-400 text-sm">Manage your referral network</p>
+              </div>
+            </motion.div>
+          </motion.div>
 
-      <h2 className="text-xl font-bold mb-4">Direct Referrals</h2>
-      <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl overflow-hidden">
-        {direct.length === 0 ? (
-          <p className="p-6 text-zinc-500">No direct referrals yet.</p>
-        ) : (
-          <ul className="divide-y divide-zinc-800">
-            {direct.map((r, i) => (
-              <li key={i} className="p-4 flex justify-between">
-                <span className="text-zinc-300">{r.email}</span>
-                <span className="text-zinc-500 text-sm">{r.username}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3"
+            >
+              <X className="w-5 h-5 text-red-400" />
+              <p className="text-red-400">{error}</p>
+            </motion.div>
+          )}
+
+          {/* Stats Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="grid md:grid-cols-3 gap-6 mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <UserPlus className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Growing</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Direct Referrals</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{stats?.directReferralsCount ?? direct.length}</p>
+                <p className="text-slate-500 text-xs mt-2">People you've referred</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <Building2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <Users className="w-4 h-4" />
+                    <span>Team</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Total Team</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalTeamCount ?? '0'}</p>
+                <p className="text-slate-500 text-xs mt-2">Your entire network</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <DollarSign className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Earnings</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Total Earnings</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalEarnings ?? '0'}</p>
+                <p className="text-slate-500 text-xs mt-2">From your network</p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Sponsor Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-8"
+          >
+            <Card className="p-6 md:p-8">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                    <User className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Your Sponsor</h2>
+                    <p className="text-slate-400 text-sm mt-1">The person who referred you</p>
+                  </div>
+                </div>
+              </div>
+
+              {sponsor ? (
+                <div className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">{sponsor.email}</p>
+                    <p className="text-slate-400 text-sm">Your upline sponsor</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                  <div className="w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-slate-400" />
+                  </div>
+                  <div>
+                    <p className="text-slate-300 font-medium">No sponsor found</p>
+                    <p className="text-slate-500 text-sm">You might be at the top level</p>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </motion.div>
+
+          {/* Direct Referrals */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <UserPlus className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">Direct Referrals</h2>
+                <p className="text-slate-400 text-sm">People you've directly referred</p>
+              </div>
+            </motion.div>
+
+            <Card className="overflow-hidden">
+              {direct.length === 0 ? (
+                <div className="p-8 text-center">
+                  <UserPlus className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">No direct referrals yet</p>
+                  <p className="text-slate-400 text-sm mt-2">Start sharing your referral link to build your team</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-700/50">
+                  {direct.map((r, i) => (
+                    <div key={i} className="p-4 hover:bg-slate-800/30 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-white">{r.email}</p>
+                            <p className="text-slate-400 text-sm">@{r.username}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                          <UserPlus className="w-4 h-4" />
+                          <span>Direct</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </motion.div>
+        </div>
       </div>
     </div>
   )

@@ -135,7 +135,7 @@ export default function EarningPage() {
 
   return (
     // Main container with consistent styling
-    <div className="space-y-4 sm:space-y-6 md:space-y-8 bg-zinc-950">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 bg-background">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>

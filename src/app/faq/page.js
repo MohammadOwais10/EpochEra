@@ -6,13 +6,17 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
 
   useEffect(() => {
-    document.title = "FAQ - EpochEra";
+    document.title = "FAQ - EpochEra Platform";
   }, []);
 
   const faqs = [
     {
-      question: "What is EpochEra?",
+      question: "What is the EpochEra platform?",
       answer: "EpochEra is a decentralized prediction market platform built on Telegram. It allows users to create prediction markets, participate in forecasting outcomes, and earn rewards for accurate predictions. Our platform combines the power of blockchain technology with the accessibility of Telegram to make prediction markets easy and fun for everyone."
+    },
+    {
+      question: "What is the difference between EpochEra and Epoch?",
+      answer: "EpochEra is the name of the predictions market platform built on TON blockchain. The name of the Token is Epoch. EpochEra provides the infrastructure and platform, while Epoch is the native token used within the ecosystem for transactions, staking, governance, and rewards."
     },
     {
       question: "How does the prediction market work?",
@@ -20,15 +24,15 @@ export default function FAQ() {
     },
     {
       question: "What blockchain is EpochEra built on?",
-      answer: "EpochEra is built on a high-performance blockchain network that supports smart contracts. Our smart contracts handle all prediction market logic, including position buying, outcome determination, and reward distribution in a trustless and transparent manner."
+      answer: "EpochEra is built on the TON blockchain. Our smart contracts handle all prediction market logic, including position buying, outcome determination, and reward distribution in a trustless and transparent manner."
     },
     {
       question: "How do I participate in the presale?",
-      answer: "To participate in the EpochEra token presale, you'll need a compatible cryptocurrency wallet. Simply connect your wallet to our platform, select the amount of tokens you wish to purchase, and complete the transaction. Make sure you're not in a restricted jurisdiction before participating."
+      answer: "To participate in the Epoch token presale, you'll need a compatible cryptocurrency wallet. Simply connect your wallet to our platform, select the amount of tokens you wish to purchase, and complete the transaction. Make sure you're not in a restricted jurisdiction before participating."
     },
     {
-      question: "What can I do with EpochEra tokens?",
-      answer: "EpochEra tokens have multiple utilities: participate in prediction markets, stake tokens to earn rewards, vote on governance proposals, receive fee discounts, access premium features on Telegram, and earn liquidity mining rewards by providing liquidity to DEX pools."
+      question: "What can I do with Epoch tokens?",
+      answer: "Epoch tokens have multiple utilities: participate in prediction markets, stake tokens to earn rewards, vote on governance proposals, receive fee discounts, access premium features on Telegram, and earn liquidity mining rewards by providing liquidity to DEX pools."
     },
     {
       question: "Is my investment safe?",
@@ -44,7 +48,7 @@ export default function FAQ() {
     },
     {
       question: "Can I create my own prediction markets?",
-      answer: "Yes! Token holders can create custom prediction markets on topics of their choice. Market creators pay a small fee in EpochEra tokens, and they may earn additional rewards if their market attracts significant participation and trading volume."
+      answer: "Yes! Token holders can create custom prediction markets on topics of their choice. Market creators pay a small fee in Epoch tokens, and they may earn additional rewards if their market attracts significant participation and trading volume."
     },
     {
       question: "How does the referral program work?",
@@ -52,7 +56,7 @@ export default function FAQ() {
     },
     {
       question: "What are the fees?",
-      answer: "EpochEra charges a small platform fee on prediction market transactions, typically 2-5% depending on the market type. Token holders receive fee discounts, and a portion of fees is used for token buybacks and burns to benefit the entire ecosystem."
+      answer: "EpochEra charges a small platform fee on prediction market transactions, typically 2-5% depending on the market type. Epoch token holders receive fee discounts, and a portion of fees is used for token buybacks and burns to benefit the entire ecosystem."
     },
     {
       question: "Is there a minimum investment?",
@@ -68,7 +72,7 @@ export default function FAQ() {
     },
     {
       question: "How is the platform governed?",
-      answer: "EpochEra uses decentralized governance where token holders can propose and vote on changes to the platform. This includes fee structures, new features, parameter adjustments, and other important decisions. The more tokens you hold, the more voting power you have."
+      answer: "EpochEra uses decentralized governance where Epoch token holders can propose and vote on changes to the platform. This includes fee structures, new features, parameter adjustments, and other important decisions. The more tokens you hold, the more voting power you have."
     }
   ];
 
@@ -78,7 +82,7 @@ export default function FAQ() {
 
   return (
     <>
-      <div className="bg-zinc-950 min-h-screen">
+      <div className="bg-background min-h-screen">
         <div className="fixed top-0 w-full backdrop-blur-md bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] shadow-lg text-white py-2 text-center font-semibold font-mono z-40 px-2">
           <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl whitespace-normal sm:whitespace-nowrap px-1 sm:px-4">
             Powering the Future of Decentralized Predictions on Telegram
@@ -92,7 +96,7 @@ export default function FAQ() {
                 Frequently Asked <span className="text-[#EBD197]">Questions</span>
               </h1>
               <p className="text-gray-400 text-lg">
-                Everything you need to know about EpochEra
+                Everything you need to know about the EpochEra platform and Epoch tokens
               </p>
             </div>
 
@@ -100,11 +104,11 @@ export default function FAQ() {
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden"
+                  className="bg-zinc-900/30 rounded-lg border border-zinc-800 overflow-hidden"
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-zinc-800 transition-colors"
+                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-zinc-800/40 transition-colors"
                   >
                     <span className="text-white font-medium pr-4">{faq.question}</span>
                     <div className={`w-6 h-6 flex items-center justify-center flex-shrink-0 transition-transform ${openIndex === index ? 'rotate-180' : ''}`}>
@@ -134,7 +138,7 @@ export default function FAQ() {
               ))}
             </div>
 
-            <div className="mt-12 bg-zinc-900 rounded-lg border border-zinc-800 p-6 sm:p-8 text-center">
+            <div className="mt-12 bg-black/30 rounded-lg border border-zinc-800 p-6 sm:p-8 text-center">
               <h3 className="text-xl font-bold text-white mb-3">Still have questions?</h3>
               <p className="text-gray-400 mb-6">
                 Can't find the answer you're looking for? Please reach out to our community team.
@@ -156,7 +160,7 @@ export default function FAQ() {
             </div>
 
             <div className="mt-8 pt-6 border-t border-zinc-800 text-center text-zinc-500 text-sm">
-              <p>Last Updated: August 2025</p>
+              <p>Last Updated: August 2026</p>
             </div>
           </div>
         </div>

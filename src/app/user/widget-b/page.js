@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, erc20Abi } from 'viem'
@@ -17,7 +18,8 @@ import {
   cancelWidgetBSellRequest,
 } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, Coins, Wallet, ArrowUp, ArrowDown, History, X, Shield, Send, DollarSign, Package, Clock, AlertCircle, Percent, TrendingUp } from 'lucide-react'
+import Card from '@/components/ui/Card'
 
 export default function WidgetBPage() {
   const router = useRouter()
@@ -41,7 +43,7 @@ export default function WidgetBPage() {
   const [manualTx, setManualTx] = useState('')
   const [manualSender, setManualSender] = useState('')
   const [sellAmount, setSellAmount] = useState('')
-  const [sellNetwork, setSellNetwork] = useState('TRC20')
+  const [sellNetwork, setSellNetwork] = useState('BSC')
   const [sellAddress, setSellAddress] = useState('')
   const [copied, setCopied] = useState('')
 
@@ -228,152 +230,362 @@ export default function WidgetBPage() {
     }
   }
 
-  if (loading) return <div className="p-8 text-white">Loading...</div>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#B48811]/30 border-t-[#EBD197] rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading Widget B...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="p-8 text-white w-full">
-      <h1 className="text-3xl font-bold mb-6">Widget B</h1>
-      {error && <p className="text-red-400 mb-4">{error}</p>}
-      {msg && <p className="text-green-400 mb-4">{msg}</p>}
-
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <p className="text-zinc-400 text-sm">Available Balance</p>
-          <p className="text-2xl font-bold mt-2">{balance?.available ?? '0'}</p>
-        </div>
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <p className="text-zinc-400 text-sm">Coins per USD</p>
-          <p className="text-2xl font-bold mt-2">{config?.coinsPerUsd ?? '0'}</p>
-        </div>
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <p className="text-zinc-400 text-sm">Sell %</p>
-          <p className="text-2xl font-bold mt-2">{config?.sellPercent ?? '0'}</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+      {/* Professional Background Effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#B48811]/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#B48811]/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#B48811]/2 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTM2IDM0djItaC0ydjJoLTJvLTJoLTJvLTJoLTJ2MmgydjJoMnYtMmgydi0yaDJ2LTJoLTJ2LTJoLTJvLTJoLTJ2MmgydjJoLTJ2LTJoLTJvLTJoLTJ2MmgydjJoMnYtMmgydi0yaDJ2LTJoLTJ6bTAgMmgydjJoLTJ2LTJoLTJ6bTAgMmgydjJoLTJ2LTJoLTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">Buy Coins</h2>
-          {!pendingPayment ? (
-            <>
-              <input
-                type="text"
-                placeholder="USD amount"
-                value={buyAmount}
-                onChange={(e) => setBuyAmount(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 text-white mb-4 focus:border-[#B48811] focus:outline-none"
-              />
-              <Button onClick={handleBuy} disabled={processing} variant="primary" className="w-full rounded-full">
-                {processing ? 'Processing...' : 'Buy'}
-              </Button>
-            </>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-zinc-400 text-sm">Send <strong>{pendingPayment.amountUsd} USD</strong> in USDT to the deposit wallet on <strong>{(pendingPayment.network || 'BSC-TESTNET').toUpperCase()}</strong>.</p>
-              <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4">
-                <p className="text-zinc-500 text-sm">Deposit Wallet</p>
-                <div className="flex items-center justify-between gap-2 mt-1">
-                  <p className="font-mono text-sm break-all">{pendingPayment.depositWallet}</p>
-                  <button onClick={() => handleCopy(pendingPayment.depositWallet, 'wallet')} className="text-[#EBD197] hover:text-white shrink-0">
-                    {copied === 'wallet' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  </button>
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Professional Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <Coins className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Widget B</h1>
+                <p className="text-slate-400 text-sm">Trade coins with Widget B</p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Error/Success Messages */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3"
+            >
+              <X className="w-5 h-5 text-red-400" />
+              <p className="text-red-400">{error}</p>
+            </motion.div>
+          )}
+
+          {msg && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 bg-green-500/10 border border-green-500/20 rounded-xl p-4 flex items-center gap-3"
+            >
+              <Shield className="w-5 h-5 text-green-400" />
+              <p className="text-green-400">{msg}</p>
+            </motion.div>
+          )}
+
+          {/* Balance Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="grid md:grid-cols-3 gap-6 mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <Wallet className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <ArrowUp className="w-4 h-4" />
+                    <span>Balance</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Available Balance</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{balance?.available ?? '0'}</p>
+                <p className="text-slate-500 text-xs mt-2">Your Widget B coins</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <DollarSign className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Rate</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Coins per USD</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{config?.coinsPerUsd ?? '0'}</p>
+                <p className="text-slate-500 text-xs mt-2">Exchange rate</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <Percent className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Sell</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Sell Percentage</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{config?.sellPercent ?? '0'}%</p>
+                <p className="text-slate-500 text-xs mt-2">Sell back rate</p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Buy/Sell Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="grid md:grid-cols-2 gap-6 mb-8"
+          >
+            {/* Buy Card */}
+            <Card className="p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <ArrowUp className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Buy Coins</h2>
+                  <p className="text-slate-400 text-sm">Purchase Widget B coins</p>
                 </div>
               </div>
-              <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4">
-                <p className="text-zinc-500 text-sm">Coins</p>
-                <p className="font-mono text-sm mt-1">{pendingPayment.coinAmount}</p>
+              {!pendingPayment ? (
+                <>
+                  <input
+                    type="text"
+                    placeholder="USD amount"
+                    value={buyAmount}
+                    onChange={(e) => setBuyAmount(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white mb-4 focus:border-[#B48811] focus:outline-none transition-colors"
+                  />
+                  <Button onClick={handleBuy} disabled={processing} variant="primary" className="w-full rounded-full">
+                    {processing ? 'Processing...' : 'Buy Coins'}
+                  </Button>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                    <p className="text-slate-400 text-sm mb-2">Deposit Wallet</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-mono text-sm text-white break-all">{pendingPayment.depositWallet}</p>
+                      <button onClick={() => handleCopy(pendingPayment.depositWallet, 'wallet')} className="text-[#EBD197] hover:text-white shrink-0">
+                        {copied === 'wallet' ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+                  <Button onClick={handlePay} disabled={isWriting || isConfirming || verifying} variant="primary" className="w-full rounded-full">
+                    {isWriting ? 'Confirm in wallet...' : isConfirming ? 'Confirming...' : verifying ? 'Verifying...' : isConnected ? 'Pay with Wallet' : 'Connect Wallet & Pay'}
+                  </Button>
+                </div>
+              )}
+            </Card>
+
+            {/* Sell Card */}
+            <Card className="p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <ArrowDown className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Sell Coins</h2>
+                  <p className="text-slate-400 text-sm">Sell your Widget B coins</p>
+                </div>
               </div>
-              <Button onClick={handlePay} disabled={isWriting || isConfirming || verifying} variant="primary" className="w-full rounded-full">
-                {isWriting ? 'Confirm in wallet...' : isConfirming ? 'Confirming...' : verifying ? 'Verifying...' : isConnected ? `Pay ${pendingPayment.amountUsd} USDT` : 'Connect Wallet & Pay'}
-              </Button>
-
-              <p className="text-zinc-500 text-sm mt-2">Or verify manually:</p>
-              <form onSubmit={handleVerifyManual} className="space-y-3">
+              <div className="space-y-4">
                 <input
                   type="text"
-                  placeholder="Transaction hash"
-                  value={manualTx}
-                  onChange={(e) => setManualTx(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 text-white focus:border-[#B48811] focus:outline-none"
-                  required
+                  placeholder="Coin amount"
+                  value={sellAmount}
+                  onChange={(e) => setSellAmount(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white focus:border-[#B48811] focus:outline-none transition-colors"
                 />
                 <input
                   type="text"
-                  placeholder="Your sender address"
-                  value={manualSender}
-                  onChange={(e) => setManualSender(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 text-white focus:border-[#B48811] focus:outline-none"
-                  required
+                  placeholder="Network (BSC)"
+                  value={sellNetwork}
+                  onChange={(e) => setSellNetwork(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white focus:border-[#B48811] focus:outline-none transition-colors"
                 />
-                <Button type="submit" disabled={verifying} variant="outline" className="w-full rounded-full">
-                  {verifying ? 'Verifying...' : 'Verify Deposit'}
+                <input
+                  type="text"
+                  placeholder="Your USDT wallet address"
+                  value={sellAddress}
+                  onChange={(e) => setSellAddress(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white focus:border-[#B48811] focus:outline-none transition-colors"
+                />
+                <Button onClick={handleSell} disabled={processing} variant="primary" className="w-full rounded-full">
+                  {processing ? 'Processing...' : 'Sell Coins'}
                 </Button>
-              </form>
-            </div>
-          )}
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Purchase History */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <History className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">Purchase History</h2>
+                <p className="text-slate-400 text-sm">Your Widget B coin purchases</p>
+              </div>
+            </motion.div>
+
+            <Card className="overflow-hidden">
+              {visiblePurchases.length === 0 ? (
+                <div className="p-8 text-center">
+                  <History className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">No purchases found</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-700/50">
+                  {visiblePurchases.map((p) => (
+                    <div key={p.id} className="p-4 hover:bg-slate-800/30 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                            <Coins className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-white">{p.coinAmount} coins</p>
+                            <p className="text-slate-400 text-sm">{p.usdAmount ?? p.amountUsd} USD</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-slate-400 text-sm flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '-'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </motion.div>
+
+          {/* Sell Requests */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <ArrowDown className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">Sell Requests</h2>
+                <p className="text-slate-400 text-sm">Your pending sell requests</p>
+              </div>
+            </motion.div>
+
+            <Card className="overflow-hidden">
+              {sells.length === 0 ? (
+                <div className="p-8 text-center">
+                  <ArrowDown className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">No sell requests found</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-700/50">
+                  {sells.map((s) => (
+                    <div key={s.id} className="p-4 hover:bg-slate-800/30 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                            <Coins className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-white">{s.coinAmount} coins</p>
+                            <div className={`text-xs px-2 py-0.5 rounded-full font-medium mt-1 ${
+                              s.status === 'COMPLETED' 
+                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                : s.status === 'PENDING' 
+                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' 
+                                : 'bg-slate-700/50 text-slate-400 border border-slate-600/50'
+                            }`}>
+                              {s.status}
+                            </div>
+                          </div>
+                        </div>
+                        {s.status === 'PENDING' && (
+                          <Button onClick={() => handleCancel(s.id)} variant="outline" size="sm" className="rounded-full">
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </motion.div>
         </div>
-
-        <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">Sell Coins</h2>
-          <input
-            type="text"
-            placeholder="Coin amount"
-            value={sellAmount}
-            onChange={(e) => setSellAmount(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 text-white mb-4 focus:border-[#B48811] focus:outline-none"
-          />
-          <input
-            type="text"
-            placeholder="USDT Network (TRC20 / BSC)"
-            value={sellNetwork}
-            onChange={(e) => setSellNetwork(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 text-white mb-4 focus:border-[#B48811] focus:outline-none"
-          />
-          <input
-            type="text"
-            placeholder="USDT wallet address"
-            value={sellAddress}
-            onChange={(e) => setSellAddress(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-700 text-white mb-4 focus:border-[#B48811] focus:outline-none"
-          />
-          <Button onClick={handleSell} disabled={processing} variant="outline" className="w-full rounded-full">
-            {processing ? 'Processing...' : 'Sell'}
-          </Button>
-        </div>
-      </div>
-
-      <h2 className="text-xl font-bold mb-4">Purchases</h2>
-      <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl overflow-hidden mb-8">
-        {visiblePurchases.length === 0 ? (
-          <p className="p-6 text-zinc-500">No confirmed purchases found.</p>
-        ) : (
-          <ul className="divide-y divide-zinc-800">
-            {visiblePurchases.map((p, i) => (
-              <li key={i} className="p-4 flex justify-between">
-                <span className="text-zinc-300">{p.coinAmount} coins</span>
-                <span className="text-zinc-500 text-sm">{p.status} — {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '-'}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <h2 className="text-xl font-bold mb-4">Sell Requests</h2>
-      <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl overflow-hidden">
-        {sells.length === 0 ? (
-          <p className="p-6 text-zinc-500">No sell requests found.</p>
-        ) : (
-          <ul className="divide-y divide-zinc-800">
-            {sells.map((s) => (
-              <li key={s.id} className="p-4 flex justify-between items-center">
-                <span className="text-zinc-300">{s.coinAmount} coins — {s.status}</span>
-                {s.status === 'PENDING' && (
-                  <Button onClick={() => handleCancel(s.id)} variant="outline" size="sm" className="rounded-full">Cancel</Button>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   )

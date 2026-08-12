@@ -38,14 +38,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
+      <div className="min-h-screen bg-background flex items-center justify-center text-white">
         Loading...
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-6 md:p-10">
+    <div className="min-h-screen bg-background text-white p-6 md:p-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-10">
           <div className="flex items-center gap-3">

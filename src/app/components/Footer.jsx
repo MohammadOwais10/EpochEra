@@ -42,11 +42,11 @@ export default function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center space-x-2 mb-6">
-                  <img src="/logo.png" className="w-12 h-12" alt="EpochEra Coin Logo" />
+                  <img src="/logo.png" className="w-12 h-12" alt="EpochEra Logo" />
               <span className="text-2xl font-bold text-white">EpochEra</span>
             </Link>
             <p className="text-white mb-6 leading-relaxed">
-              Democratizing financial services through a secure, transparent blockchain platform that connects individuals worldwide.
+              Democratizing financial services through a secure, transparent blockchain platform that connects individuals worldwide. EpochEra is the platform name and Epoch is the token name.
             </p>
           </div>
 
@@ -113,7 +113,7 @@ export default function Footer() {
         <div className="mt-12 pt-8 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
           <div className="md:max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
             <p className="text-white text-sm mb-4 md:mb-0">
-              © 2026 EpochEra. All rights reserved.
+              © 2026 EpochEra Platform. All rights reserved.
             </p>
             <Link 
               href="/disclaimer" 

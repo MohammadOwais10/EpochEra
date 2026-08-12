@@ -19,16 +19,16 @@ export default function UserLayout({ children }) {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
+      <div className="min-h-screen bg-background flex items-center justify-center text-white">
         Loading...
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex">
+    <div className="min-h-screen bg-background flex">
       <UserSidebar />
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="flex-1 overflow-y-auto ml-64">{children}</main>
     </div>
   )
 }

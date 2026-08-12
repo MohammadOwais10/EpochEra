@@ -1,4 +1,6 @@
-## EpochEra@1.0.0
+## EpochEra Platform
+
+EpochEra is a predictions market platform built on TON blockchain. The name of the Token is Epoch.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

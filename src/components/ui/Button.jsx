@@ -11,10 +11,10 @@ const Button = ({ children, onClick, disabled, variant = 'primary', size = 'md',
   };
   
   const variants = {
-    primary: "bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#BB9B49] hover:from-[#EBD197] hover:via-[#A2790D] hover:to-[#BB9B49] hover:shadow-lg hover:-translate-y-0.5 text-white disabled:bg-zinc-700 disabled:text-slate-600 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none cursor-pointer",
-    secondary: "bg-zinc-800 hover:bg-zinc-700 hover:shadow-md text-white border border-zinc-700 hover:border-zinc-600",
-    gradient: "bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#BB9B49] hover:from-[#EBD197] hover:via-[#A2790D] hover:to-[#BB9B49] hover:shadow-lg hover:-translate-y-0.5 text-white",
-    outline:  "bg-gradient-to-br from-zinc-800 to-zinc-950  border-[#B48811] text-[#EBD197] hover:bg-[#B48811]/10 hover:border-[#B48811] hover:shadow-md",
+    primary: "bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm hover:from-[#EBD197] hover:via-[#B48811] hover:to-[#BB9B49] hover:shadow-black/10 hover:-translate-y-0.5 text-white disabled:bg-secondary disabled:text-muted-foreground disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none cursor-pointer",
+    secondary: "bg-secondary hover:bg-secondary/80 hover:shadow-md text-foreground border border-border hover:border-border",
+    gradient: "bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm hover:from-[#EBD197] hover:via-[#B48811] hover:to-[#BB9B49] hover:shadow-black/10 hover:-translate-y-0.5 text-white",
+    outline:  "bg-gradient-to-br from-secondary to-card border-[#B48811] text-[#EBD197] hover:bg-[#B48811]/10 hover:border-[#B48811] hover:shadow-md",
     ghost: "text-[#EBD197] hover:bg-[#B48811]/10 hover:text-[#BB9B49]"
   };
 
