@@ -84,7 +84,7 @@ export function Navigation() {
             {navigation.map((item) => (
               <NavLink key={item.name} item={item} pathname={pathname} handleClick={handleNavClick} />
             ))}
-            <Button variant="primary" size="lg" className="rounded-full" onClick={address ? () => router.push("/dashboard") : async () => open()}>{address ? "Dashboard" : "Dashboard"}</Button>
+            <Button variant="primary" size="lg" className="rounded-full" onClick={() => router.push('/signin')}>Get Started</Button>
           </div>
 
           {/* Mobile Navigation - Enhanced */}
@@ -150,14 +150,10 @@ export function Navigation() {
                       className="w-full rounded-full"
                       onClick={() => {
                         setIsOpen(false)
-                        if (address) {
-                          router.push("/dashboard")
-                        } else {
-                          open()
-                        }
+                        router.push('/signin')
                       }}
                     >
-                      {address ? "Dashboard" : "Dashboard"}
+                      Get Started
                     </Button>
                   </div>
                 </div>
