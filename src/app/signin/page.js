@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { login } from '@/lib/api'
+import { setAuthTokens } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
 
@@ -26,8 +27,8 @@ export default function SignIn() {
     try {
       const result = await login(form.email, form.password)
       if (!result.success) throw new Error(result.error?.message || 'Login failed')
-      const { accessToken, user } = result.data
-      localStorage.setItem('token', accessToken)
+      const { accessToken, refreshToken, user } = result.data
+      setAuthTokens(accessToken, refreshToken)
       if (user.role === 'ADMIN') {
         router.push('/admin/dashboard')
       } else {
@@ -109,7 +110,7 @@ export default function SignIn() {
           <p className="text-muted-foreground text-sm">
             Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-[#EBD197] hover:text-[#B48811] font-medium transition-colors">
-              Get Started
+              Register
             </Link>
           </p>
         </div>

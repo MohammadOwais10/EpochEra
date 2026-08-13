@@ -14,6 +14,7 @@ import {
 } from "@reown/appkit/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image"
+import { isValidUserToken, isTokenExpired, clearAuthTokens, decodeToken } from "@/lib/utils"
 
 // Navigation links config
 const navigation = [
@@ -54,7 +55,47 @@ export function Navigation() {
   const { open, close } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
   const [isOpen, setIsOpen] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userRole, setUserRole] = useState(null)
   const pathname = usePathname()
+
+  // Check authentication status and user role
+  useEffect(() => {
+    const checkAuth = () => {
+      const authenticated = isValidUserToken() && !isTokenExpired()
+      setIsAuthenticated(authenticated)
+      
+      if (authenticated) {
+        const token = localStorage.getItem('token')
+        if (token) {
+          const payload = decodeToken(token)
+          setUserRole(payload?.role || 'USER')
+        }
+      } else {
+        setUserRole(null)
+      }
+    }
+    
+    checkAuth()
+    
+    // Listen for storage changes (in case user logs out in another tab)
+    const handleStorageChange = () => {
+      checkAuth()
+    }
+    
+    // Listen for custom auth state changes (same tab)
+    const handleAuthChange = () => {
+      checkAuth()
+    }
+    
+    window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('auth-state-changed', handleAuthChange)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('auth-state-changed', handleAuthChange)
+    }
+  }, [])
 
   // Dashboard layouts already have their own sidebars, so don't double-header them
   if (pathname && (pathname.startsWith('/user') || pathname.startsWith('/admin') || pathname.startsWith('/dashboard-offline'))) {
@@ -75,6 +116,20 @@ export function Navigation() {
     setIsOpen(false)
   }
 
+  const handleAuthClick = () => {
+    if (isAuthenticated) {
+      // If authenticated, redirect to appropriate dashboard
+      if (userRole === 'ADMIN') {
+        router.push('/admin/dashboard')
+      } else {
+        router.push('/user/dashboard')
+      }
+    } else {
+      // If not authenticated, go to login
+      router.push('/signin')
+    }
+  }
+
   return (
     <nav className={`fixed ${topOffset} w-full z-50`}>
       <div className="bg-[#392236] shadow-2xl shadow-black/20">
@@ -91,7 +146,10 @@ export function Navigation() {
             {navigation.map((item) => (
               <NavLink key={item.name} item={item} pathname={pathname} handleClick={handleNavClick} />
             ))}
-            <Button variant="primary" size="lg" className="rounded-full" onClick={() => router.push('/signin')}>Get Started</Button>
+            <Button variant="primary" size="lg" className="rounded-full" onClick={handleAuthClick}>
+              {isAuthenticated ? 'Dashboard' : 'Get Started'}
+            </Button>
+           
           </div>
 
           {/* Mobile Navigation - Enhanced */}
@@ -150,18 +208,19 @@ export function Navigation() {
                     ))}
                   </nav>
 
-                  <div className="p-4 border-t border-white/10">
+                  <div className="p-4 border-t border-white/10 space-y-3">
                     <Button 
                       variant="primary" 
                       size="lg" 
                       className="w-full rounded-full"
                       onClick={() => {
                         setIsOpen(false)
-                        router.push('/signin')
+                        handleAuthClick()
                       }}
                     >
-                      Get Started
+                      {isAuthenticated ? 'Dashboard' : 'Get Started'}
                     </Button>
+                  
                   </div>
                 </div>
               </SheetContent>

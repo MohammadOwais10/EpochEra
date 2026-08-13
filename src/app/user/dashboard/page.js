@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import StatCard from '@/components/ui/StatCard'
 import { getUserById, getDashboard } from '@/lib/api'
+import { clearAuthTokens } from '@/lib/utils'
 import {
   CircleDollarSign,
   Box,
@@ -126,12 +127,19 @@ export default function UserDashboard() {
     }
     Promise.all([getUserById(), getDashboard()])
       .then(([u, d]) => {
-        if (u.success) setUser(u.data)
-        if (d.success) setStats(d.data)
+        console.log('User dashboard API responses:', { user: u, dashboard: d })
+        if (u.success) {
+          const userData = u.data || u.user || u
+          setUser(userData)
+        }
+        if (d.success) {
+          setStats(d.data)
+        }
       })
       .catch((err) => {
+        console.error('User dashboard error:', err)
         setError('Failed to load dashboard data')
-        localStorage.removeItem('token')
+        clearAuthTokens()
         router.push('/signin')
       })
       .finally(() => setLoading(false))

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAppKitAccount, useAppKit } from "@reown/appkit/react";
 import Footer from "./Footer"
 import { motion } from "framer-motion"
+import { isValidUserToken, isTokenExpired, decodeToken } from "@/lib/utils"
 
 function HomePage() {
   const router = useRouter()
@@ -15,10 +16,25 @@ function HomePage() {
   const { open, close } = useAppKit();
 
   const handleCTAClick = () => {
-    if (address) {
-      router.push("/dashboard")
+    // Check if user is authenticated with the backend
+    const authenticated = isValidUserToken() && !isTokenExpired()
+    
+    if (authenticated) {
+      // If authenticated, redirect to appropriate dashboard
+      const token = localStorage.getItem('token')
+      if (token) {
+        const payload = decodeToken(token)
+        if (payload?.role === 'ADMIN') {
+          router.push('/admin/dashboard')
+        } else {
+          router.push('/user/dashboard')
+        }
+      } else {
+        router.push('/user/dashboard')
+      }
     } else {
-      open()
+      // If not authenticated, go to signin page
+      router.push('/signin')
     }
   }
 

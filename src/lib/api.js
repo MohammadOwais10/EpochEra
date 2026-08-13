@@ -1,6 +1,25 @@
 import axios from 'axios';
+import { setAuthTokensWithoutEvent, clearAuthTokensWithoutEvent } from './utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api/v1';
+
+// Helper function to set auth tokens and dispatch event
+const setAuthTokensWithEvent = (accessToken, refreshToken) => {
+  setAuthTokensWithoutEvent(accessToken, refreshToken);
+  // Dispatch event to notify components of auth state change
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('auth-state-changed'));
+  }
+};
+
+// Helper function to clear auth tokens and dispatch event
+const clearAuthTokensWithEvent = () => {
+  clearAuthTokensWithoutEvent();
+  // Dispatch event to notify components of auth state change
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('auth-state-changed'));
+  }
+};
 
 const api = axios.create({
   baseURL: API_URL,
@@ -9,10 +28,39 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('token');
     if (token) {
+      // Check if token is expired
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const currentTime = Date.now() / 1000;
+        
+        if (payload.exp && payload.exp < currentTime) {
+          // Token is expired, try to refresh
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (refreshToken && !config._retry) {
+            try {
+              const response = await api.post('/auth/refresh', { refreshToken });
+              if (response.data.success) {
+                const { accessToken, refreshToken: newRefreshToken } = response.data.data;
+                setAuthTokensWithEvent(accessToken, newRefreshToken);
+                config.headers.Authorization = `Bearer ${accessToken}`;
+                return config;
+              }
+            } catch (refreshError) {
+              console.error('Token refresh failed:', refreshError);
+              clearAuthTokensWithEvent();
+              window.location.href = '/signin';
+              return Promise.reject(refreshError);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error checking token expiration:', error);
+      }
+      
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
@@ -41,6 +89,14 @@ function formatApiError(error) {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
+    // Handle 401 errors that weren't caught by request interceptor
+    if (err.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        clearAuthTokensWithEvent();
+        window.location.href = '/signin';
+      }
+    }
+    
     if (err.response?.data?.error) {
       err.response.data.error.message = formatApiError(err.response.data.error);
     } else if (!err.response && err.request) {
@@ -71,6 +127,9 @@ export const resendVerification = (email) => post('/auth/resend-verification', {
 export const forgotPassword = (email) => post('/auth/forgot-password', { email });
 export const resetPassword = (email, token, newPassword) => post('/auth/reset-password', { email, token, newPassword });
 export const getUserById = (_id = null) => get('/auth/me');
+
+// Export the api instance for direct use if needed
+export default api;
 
 /* ============================================================
    DASHBOARD
@@ -198,4 +257,5 @@ export const checkTransactionPassword = async (data) => ({
   message: 'Check transaction password not yet implemented',
 });
 
-export default api;
+// Export the api instance for direct use if needed
+export { api };

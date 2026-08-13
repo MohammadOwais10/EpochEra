@@ -11,7 +11,7 @@ export default function FAQ() {
   const faqs = [
     {
       question: "What is the EpochEra platform?",
-      answer: "EpochEra is a decentralized prediction market platform built on Telegram. It allows users to create prediction markets, participate in forecasting outcomes, and earn rewards for accurate predictions. Our platform combines the power of blockchain technology with the accessibility of Telegram to make prediction markets easy and fun for everyone."
+      answer: "EpochEra is a decentralized prediction market platform built on The Open Network (TON) blockchain. It allows users to create prediction markets, participate in forecasting outcomes, and earn rewards for accurate predictions. Our platform combines the power of blockchain technology with the accessibility of Telegram to make prediction markets easy and fun for everyone."
     },
     {
       question: "What is the difference between EpochEra and Epoch?",
@@ -31,7 +31,7 @@ export default function FAQ() {
     },
     {
       question: "What can I do with Epoch tokens?",
-      answer: "Epoch tokens have multiple utilities: participate in prediction markets, stake tokens to earn rewards, vote on governance proposals, receive fee discounts, access premium features on Telegram, and earn liquidity mining rewards by providing liquidity to DEX pools."
+      answer: "Epoch tokens have multiple utilities: participate in prediction markets, stake tokens to earn rewards, vote on governance proposals, receive fee discounts, and earn liquidity mining rewards by providing liquidity to DEX pools."
     },
     {
       question: "Is my investment safe?",

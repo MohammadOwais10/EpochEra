@@ -4,9 +4,35 @@ import { motion } from "framer-motion";
 import { TrendingUp, PieChart, Lock, Zap, Shield, Globe, Award, ArrowRight, CheckCircle, Coins, Flame, Calendar, BarChart3, LineChart, Activity, Wallet, Timer, Sparkles, Layers, Target, Diamond } from "lucide-react";
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart as RechartsLineChart, Line, Area, AreaChart, RadialBarChart, RadialBar } from "recharts";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { isValidUserToken, isTokenExpired, decodeToken } from "@/lib/utils";
 
 export default function Tokenomics() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("distribution");
+
+  const handleGetStarted = () => {
+    // Check if user is authenticated with the backend
+    const authenticated = isValidUserToken() && !isTokenExpired()
+    
+    if (authenticated) {
+      // If authenticated, redirect to appropriate dashboard
+      const token = localStorage.getItem('token')
+      if (token) {
+        const payload = decodeToken(token)
+        if (payload?.role === 'ADMIN') {
+          router.push('/admin/dashboard')
+        } else {
+          router.push('/user/dashboard')
+        }
+      } else {
+        router.push('/user/dashboard')
+      }
+    } else {
+      // If not authenticated, go to signin page
+      router.push('/signin')
+    }
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -549,7 +575,10 @@ export default function Tokenomics() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                  <button className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#EBD197] to-[#B48811] text-zinc-950 font-semibold px-10 py-5 rounded-full hover:scale-105 transition-transform shadow-2xl shadow-[#B48811]/20">
+                  <button 
+                    onClick={handleGetStarted}
+                    className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#EBD197] to-[#B48811] text-zinc-950 font-semibold px-10 py-5 rounded-full hover:scale-105 transition-transform shadow-2xl shadow-[#B48811]/20"
+                  >
                     Get Started
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { UserSidebar } from '@/components/UserSidebar'
+import { isTokenExpired, clearAuthTokens, isUser } from '@/lib/utils'
 
 export default function UserLayout({ children }) {
   const router = useRouter()
@@ -10,7 +11,8 @@ export default function UserLayout({ children }) {
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-    if (!token) {
+    if (!token || isTokenExpired() || !isUser()) {
+      clearAuthTokens()
       router.push('/signin')
     } else {
       setChecking(false)

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Layers, Wallet, Users, Pickaxe, Coins, CreditCard, Repeat, MessageCircle, LogOut } from 'lucide-react'
+import { clearAuthTokens } from '@/lib/utils'
 
 const menuItems = [
   { icon: Layers, label: 'Dashboard', path: '/user/dashboard' },
@@ -20,7 +21,7 @@ export function UserSidebar() {
   const pathname = usePathname()
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
+    clearAuthTokens()
     router.push('/signin')
   }
 

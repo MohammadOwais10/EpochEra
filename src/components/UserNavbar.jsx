@@ -30,8 +30,8 @@ import {
   KeyRound
 } from "lucide-react"
 import Link from "next/link"
-import { getUserById, sendOTPforTransactionPassword, createTransactionPassword, checkTransactionPassword } from "../lib/api"
-import api from "../lib/api"
+import { getUserById, sendOTPforTransactionPassword, createTransactionPassword, checkTransactionPassword, api } from "../lib/api"
+import { clearAuthTokens } from "@/lib/utils"
 
 
 const navMenu = [
@@ -411,7 +411,7 @@ export default function userNavbar({
           <div className="p-4 border-t border-slate-700/50">
             <button 
               onClick={() => {
-                localStorage.removeItem('token')
+                clearAuthTokens()
                 router.push('/signin')
               }}
               className="flex items-center gap-2 text-white hover:text-red-500 w-full py-2 px-4 rounded-lg hover:bg-slate-800 transition-colors"
@@ -488,7 +488,7 @@ export default function userNavbar({
         <div className="px-6 pt-4 border-t border-gray-700 mt-auto">
           <button 
             onClick={() => {
-              localStorage.removeItem('token')
+              clearAuthTokens()
               router.push('/signin')
             }}
             className="flex items-center gap-2 text-white hover:text-red-500 w-full py-2"
