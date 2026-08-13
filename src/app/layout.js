@@ -3,6 +3,7 @@ import "./globals.css";
 import ScrollToTop from "./components/ScrollToTop";
 import ContextProvider from '@/context'
 import Analytics from '@/components/Analytics'
+import { Navigation } from "./components/Navbar";
 import { headers } from 'next/headers'
 
 export const metadata = {
@@ -60,10 +61,13 @@ export default async function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-         <ContextProvider cookies={cookies}>{children}</ContextProvider>
+         <ContextProvider cookies={cookies}>
+          <Navigation />
+          {children}
+        </ContextProvider>
         <ScrollToTop />
         <Analytics />
-        
+
 
       </body>
     </html>

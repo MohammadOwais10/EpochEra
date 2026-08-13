@@ -281,8 +281,8 @@ export default function UserDashboard() {
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            <motion.div 
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"> */}
+            {/* <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -305,9 +305,9 @@ export default function UserDashboard() {
                 <p className="text-3xl font-bold text-white tracking-tight">{formatCurrency(stats?.wallets?.usdCommission)}</p>
                 <p className="text-slate-500 text-xs mt-2">+${formatNumber(stats?.wallets?.usdCommission * 0.125)} this month</p>
               </div>
-            </motion.div>
+            </motion.div> */}
 
-            <motion.div 
+            {/* <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -330,9 +330,9 @@ export default function UserDashboard() {
                 <p className="text-3xl font-bold text-white tracking-tight">{stats?.mlm?.directReferrals ?? '0'}</p>
                 <p className="text-slate-500 text-xs mt-2">+{Math.max(0, (stats?.mlm?.directReferrals || 0) - 1)} new this week</p>
               </div>
-            </motion.div>
+            </motion.div> */}
 
-            <motion.div 
+            {/* <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -355,9 +355,9 @@ export default function UserDashboard() {
                 <p className="text-3xl font-bold text-white tracking-tight">{stats?.mlm?.teamCount ?? '0'}</p>
                 <p className="text-slate-500 text-xs mt-2">Growing steadily</p>
               </div>
-            </motion.div>
+            </motion.div> */}
 
-            <motion.div 
+            {/* <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -393,8 +393,8 @@ export default function UserDashboard() {
                     : 'Available now'}
                 </p>
               </div>
-            </motion.div>
-            </div>
+            </motion.div> */}
+            {/* </div> */}
           </motion.div>
 
           {/* Professional Main Content Grid */}
@@ -485,7 +485,7 @@ export default function UserDashboard() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  {/* <div className="grid grid-cols-3 gap-4">
                     <motion.div 
                       whileHover={{ scale: 1.02 }}
                       className="text-center p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
@@ -507,7 +507,7 @@ export default function UserDashboard() {
                       <p className="text-3xl font-bold text-[#EBD197]">{formatCurrency(stats?.wallets?.usdCommission)}</p>
                       <p className="text-slate-400 text-sm mt-1">Total Earnings</p>
                     </motion.div>
-                  </div>
+                  </div> */}
                 </div>
               </Card>
             </motion.div>

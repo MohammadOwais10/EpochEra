@@ -117,11 +117,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    background: 
-      radial-gradient(ellipse at top left, #162138 0%, transparent 50%),
-      radial-gradient(ellipse at bottom right, #392236 0%, transparent 50%),
-      linear-gradient(15deg, #162138 0%, #392236 100%);
-    background-blend-mode: normal, normal, normal;
+    background: #05051a;
     min-height: 100%;
   }
   body {
@@ -135,21 +131,6 @@
     min-height: 100vh;
   }
   
-  html::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-      radial-gradient(circle at 30% 70%, rgba(22, 33, 56, 0.8) 0%, transparent 50%),
-      radial-gradient(circle at 70% 30%, rgba(57, 34, 54, 0.7) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-    mix-blend-mode: multiply;
-  }
-  
   html::after {
     content: '';
     position: fixed;
@@ -159,43 +140,9 @@
     height: 100%;
     background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='6' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     pointer-events: none;
-    z-index: 1;
-    opacity: 0.25;
-    mix-blend-mode: overlay;
-  }
-  
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grainFilter'%3E%3CfeTurbulence type='turbulence' baseFrequency='1.0' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grainFilter)'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.18;
-    mix-blend-mode: color-burn;
-  }
-  
-  body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 1px,
-        rgba(0, 0, 0, 0.03) 1px,
-        rgba(0, 0, 0, 0.03) 2px
-      );
-    pointer-events: none;
-    z-index: 3;
-    opacity: 0.9;
+    z-index: 0;
+    opacity: 0.08;
+    mix-blend-mode: normal;
   }
   
   body > * {
@@ -385,4 +332,51 @@
     opacity: 0.8;
     transform: translateY(-5px);
   }
+}
+
+/* Golden 3D text effect like the EPOCH logo */
+.text-gold,
+.gold-text {
+  background: linear-gradient(
+    180deg,
+    #fff7e0 0%,
+    #EBD197 18%,
+    #B48811 42%,
+    #F2D696 58%,
+    #BB9B49 76%,
+    #A2790D 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #EBD197;
+  filter:
+    drop-shadow(0 1px 0 #8a6d0b)
+    drop-shadow(0 2px 0 #6b5309)
+    drop-shadow(0 3px 0 #4a3a05)
+    drop-shadow(0 0 12px rgba(235, 209, 151, 0.45));
+}
+
+/* Gold outline / border glow */
+.gold-border {
+  border-color: rgba(235, 209, 151, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(180, 136, 17, 0.4),
+    0 0 12px rgba(235, 209, 151, 0.25),
+    inset 0 1px 0 rgba(255, 247, 224, 0.15);
+}
+
+/* Rich leather grain overlay utility */
+.leather-grain {
+  position: relative;
+}
+
+.leather-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='leather'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23leather)'/%3E%3C/svg%3E");
+  opacity: 0.14;
+  mix-blend-mode: overlay;
 }

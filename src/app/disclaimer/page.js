@@ -1,4 +1,3 @@
-import { Navigation } from "../components/Navbar";
 import Head from "next/head";
 
 export default function Disclaimer() {
@@ -14,7 +13,7 @@ export default function Disclaimer() {
             Powering the Future of Decentralized Predictions on Telegram
           </div>
         </div>
-        <Navigation />
+
         <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-6 sm:p-8 md:p-12">

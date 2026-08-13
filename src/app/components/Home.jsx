@@ -100,12 +100,12 @@ function HomePage() {
 
               
               {/* Main Headline */}
-              <motion.h1 variants={itemVariants} className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-tight tracking-tight">
+              <motion.h1 variants={itemVariants} className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-gold leading-tight tracking-tight">
                 Purchase. Mine. Build.
               </motion.h1>
-              
+
               {/* Sub Headline */}
-              <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#BB9B49] leading-tight">
+              <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl md:text-5xl font-bold text-gold leading-tight">
                 The Future of Decentralized Predictions on Telegram
               </motion.h2>
               
@@ -158,7 +158,7 @@ function HomePage() {
               transition={{ duration: 0.6 }}
             >
               <h2 className="text-5xl sm:text-6xl font-bold text-white mb-6">
-                Why Join the <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#EBD197] via-[#B48811] to-[#BB9B49]">EpochEra</span> Ecosystem?
+                Why Join the <span className="text-gold">EpochEra</span> Ecosystem?
               </h2>
             </motion.div>
             

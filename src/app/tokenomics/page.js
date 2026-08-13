@@ -1,5 +1,4 @@
 "use client";
-import { Navigation } from "../components/Navbar";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import { TrendingUp, PieChart, Lock, Zap, Shield, Globe, Award, ArrowRight, CheckCircle, Coins, Flame, Calendar, BarChart3, LineChart, Activity, Wallet, Timer, Sparkles, Layers, Target, Diamond } from "lucide-react";
@@ -100,7 +99,7 @@ export default function Tokenomics() {
             Powering the Future of Decentralized Predictions on Telegram
           </div>
         </div>
-        <Navigation />
+
         
         <motion.div
           initial="hidden"

@@ -1,4 +1,3 @@
-import { Navigation } from "./components/Navbar";
 import HomePage from "./components/Home";
 import Head from "next/head"
 
@@ -21,7 +20,7 @@ export default function Home() {
             Powering the Future of Decentralized Predictions on Telegram
           </div>
         </div>        
-        <Navigation />
+
         <div className="pt-24">
           <HomePage />
         </div>

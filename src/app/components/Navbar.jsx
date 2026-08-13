@@ -56,6 +56,14 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
+  // Dashboard layouts already have their own sidebars, so don't double-header them
+  if (pathname && (pathname.startsWith('/user') || pathname.startsWith('/admin') || pathname.startsWith('/dashboard-offline'))) {
+    return null
+  }
+
+  const marketingPages = ['/', '/tokenomics', '/terms', '/faq', '/disclaimer']
+  const topOffset = marketingPages.includes(pathname) ? 'top-8 md:top-11' : 'top-0'
+
   const handleNavClick = (href, isSection) => {
     const sectionId = href.split('#')[1]
     if (sectionId) {
@@ -68,15 +76,14 @@ export function Navigation() {
   }
 
   return (
-    <nav className="fixed top-8 md:top-11 w-full z-50">
-      <div className="relative backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-2xl shadow-black/10 supports-[backdrop-filter]:bg-white/5 before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-white/5 before:backdrop-blur-xl overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-800/20 to-zinc-900/20" />
+    <nav className={`fixed ${topOffset} w-full z-50`}>
+      <div className="bg-[#392236] shadow-2xl shadow-black/20">
 
         <div className="relative flex justify-between items-center h-16 px-2 xl:px-auto md:max-w-7xl mx-auto">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 z-10">
           <img src="/logo.png" className="h-18 py-2 w-auto" alt="EpochEra Logo" />
-            <span className="text-xl font-bold text-white drop-shadow-sm">EpochEra</span>
+            <span className="text-xl font-bold text-gold drop-shadow-sm">EpochEra</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -101,9 +108,9 @@ export function Navigation() {
                 </Button>
               </SheetTrigger>
 
-              <SheetContent 
-                side="right" 
-                className="w-full max-w-xs p-0 bg-gradient-to-br from-zinc-800 to-zinc-900 shadow-2xl border-l border-zinc-700"
+              <SheetContent
+                side="right"
+                className="w-full max-w-xs p-0 bg-[#392236] shadow-2xl border-l border-[#B48811]/30"
                 overlayClassName="backdrop-blur-sm"
               >
                 <div className="h-full flex flex-col">
@@ -114,7 +121,7 @@ export function Navigation() {
                         className="h-10 w-auto" 
                         alt="EpochEra Logo" 
                       />
-                      <span className="text-xl font-bold text-white">EpochEra</span>
+                      <span className="text-xl font-bold text-gold">EpochEra</span>
                     </div>
                   </div>
                   
