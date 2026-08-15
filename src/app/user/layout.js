@@ -1,23 +1,31 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { UserSidebar } from '@/components/UserSidebar'
 import { isTokenExpired, clearAuthTokens, isUser } from '@/lib/utils'
 
+const PUBLIC_USER_PATHS = ['/user/signin']
+
 export default function UserLayout({ children }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
+    if (PUBLIC_USER_PATHS.includes(pathname)) {
+      setChecking(false)
+      return
+    }
+
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
     if (!token || isTokenExpired() || !isUser()) {
       clearAuthTokens()
-      router.push('/signin')
+      router.push('/user/signin')
     } else {
       setChecking(false)
     }
-  }, [router])
+  }, [router, pathname])
 
   if (checking) {
     return (
@@ -25,6 +33,10 @@ export default function UserLayout({ children }) {
         Loading...
       </div>
     )
+  }
+
+  if (PUBLIC_USER_PATHS.includes(pathname)) {
+    return <>{children}</>
   }
 
   return (

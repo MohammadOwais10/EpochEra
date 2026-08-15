@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { setAuthTokensWithoutEvent, clearAuthTokensWithoutEvent } from './utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 // Helper function to set auth tokens and dispatch event
 const setAuthTokensWithEvent = (accessToken, refreshToken) => {
@@ -121,11 +121,11 @@ export const login = (email, password) => post('/auth/login', { email, password 
 export const register = (data) => post('/auth/register', data);
 export const logout = (refreshToken) => post('/auth/logout', { refreshToken });
 export const refresh = (refreshToken) => post('/auth/refresh', { refreshToken });
-export const verifyEmail = (email, token) => post('/auth/verify-email', { email, token });
-export const verifyEmailLink = (email, token) => get(`/auth/verify-email?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`);
+export const verifyEmail = (email, otp) => post('/auth/verify-email', { email, otp });
 export const resendVerification = (email) => post('/auth/resend-verification', { email });
 export const forgotPassword = (email) => post('/auth/forgot-password', { email });
-export const resetPassword = (email, token, newPassword) => post('/auth/reset-password', { email, token, newPassword });
+export const verifyResetOtp = (email, otp) => post('/auth/verify-reset-otp', { email, otp });
+export const resetPassword = (email, otp, newPassword) => post('/auth/reset-password', { email, otp, newPassword });
 export const getUserById = (_id = null) => get('/auth/me');
 
 // Export the api instance for direct use if needed
@@ -179,12 +179,39 @@ export const getWidgetBSellRequest = (id) => get(`/widget-b/sell-requests/${id}`
 export const cancelWidgetBSellRequest = (id) => post(`/widget-b/sell-requests/${id}/cancel`);
 
 /* ============================================================
+   UPLOADS
+   ============================================================ */
+export const uploadScreenshot = (file) => {
+  const data = new FormData();
+  data.append('screenshot', file);
+  return api.post('/uploads/screenshot', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }).then((res) => res.data);
+};
+
+/* ============================================================
    MINING
    ============================================================ */
 export const getMiningContent = () => get('/mining/content');
 export const getMiningStatus = () => get('/mining/status');
+export const getMiningSocialLinks = () => get('/mining/social-links');
+export const getMySocialVerifications = () => get('/mining/social-verifications');
+export const submitSocialVerification = (data) => post('/mining/social-verifications', data);
 export const mine = (data) => post('/mining/mine', data);
 export const getMiningHistory = () => get('/mining/history');
+
+// Admin mining social verifications
+export const listAdminMiningSocialVerifications = (params = {}) => {
+  const q = new URLSearchParams();
+  if (params.status) q.set('status', params.status);
+  if (params.page) q.set('page', String(params.page));
+  if (params.limit) q.set('limit', String(params.limit));
+  const qs = q.toString();
+  return get(`/admin/mining/social-verifications${qs ? `?${qs}` : ''}`);
+};
+export const approveAdminMiningSocialVerification = (id) => patch(`/admin/mining/social-verifications/${id}/approve`);
+export const rejectAdminMiningSocialVerification = (id, data) => patch(`/admin/mining/social-verifications/${id}/reject`, data);
+export const revokeAdminMiningSocialVerification = (id, data) => patch(`/admin/mining/social-verifications/${id}/revoke`, data);
 
 /* ============================================================
    PAYMENTS

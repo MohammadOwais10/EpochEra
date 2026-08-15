@@ -145,7 +145,7 @@ export default function WalletPage() {
                     <span>Active</span>
                   </div>
                 </div>
-                <p className="text-slate-400 text-sm font-medium mb-1">USD Wallet</p>
+                <p className="text-slate-400 text-sm font-medium mb-1">USDT Wallet</p>
                 <p className="text-3xl font-bold text-white tracking-tight">{formatCurrency(wallets.usd?.available)}</p>
                 <p className="text-slate-500 text-xs mt-2">Total: {formatCurrency(wallets.usd?.total)}</p>
               </div>

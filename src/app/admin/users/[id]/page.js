@@ -138,7 +138,7 @@ export default function UserDetailPage() {
         <div className="grid md:grid-cols-2 gap-4">
           <StatCard icon={Users} label="Direct Referrals" value={mlm?.directReferrals ?? '0'} />
           <StatCard icon={Package} label="Team Count" value={mlm?.teamCount ?? '0'} />
-          <StatCard icon={Wallet} label="USD Wallet" value={wallets?.find(w => w.walletType === 'USD_COMMISSION')?.availableBalance?.toString() ?? '0'} sub="available" />
+          <StatCard icon={Wallet} label="USDT Wallet" value={wallets?.find(w => w.walletType === 'USD_COMMISSION')?.availableBalance?.toString() ?? '0'} sub="available" />
           <StatCard icon={CreditCard} label="Widget A" value={wallets?.find(w => w.walletType === 'WIDGET_A')?.availableBalance?.toString() ?? '0'} sub="available" />
           <StatCard icon={Coins} label="Widget B" value={wallets?.find(w => w.walletType === 'WIDGET_B')?.availableBalance?.toString() ?? '0'} sub="available" />
           <StatCard icon={Pickaxe} label="Mining" value={miningHistory?.data?.length ?? '0'} sub="recent records" />
@@ -165,7 +165,7 @@ export default function UserDetailPage() {
                   <td className="p-4 text-white">{w.walletType}</td>
                   <td className="p-4 text-slate-300">{w.availableBalance}</td>
                   <td className="p-4 text-slate-300">{w.lockedBalance}</td>
-                  <td className="p-4 font-semibold text-[#EBD197]">{w.availableBalance + w.lockedBalance}</td>
+                  <td className="p-4 font-semibold text-[#EBD197]">{(Number(w.availableBalance) + Number(w.lockedBalance)).toLocaleString()}</td>
                 </tr>
               ))
             )}
@@ -176,7 +176,7 @@ export default function UserDetailPage() {
       <h2 className="text-xl font-bold mb-4 text-white">Membership</h2>
       <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 mb-8">
         {membership?.active ? (
-          <p className="text-emerald-400 font-semibold">Active — {membership.active.amountUsd} USD</p>
+          <p className="text-emerald-400 font-semibold">Active — {membership.active.amountUsd} USDT</p>
         ) : (
           <p className="text-slate-500">No active membership.</p>
         )}
@@ -184,7 +184,7 @@ export default function UserDetailPage() {
           <ul className="divide-y divide-slate-700/30 mt-4">
             {membership.history.map((h, i) => (
               <li key={i} className="py-2 flex justify-between text-sm">
-                <span className="text-slate-300">{h.amountUsd} USD — {h.status}</span>
+                <span className="text-slate-300">{h.amountUsd} USDT — {h.status}</span>
                 <span className="text-slate-500">{h.createdAt ? new Date(h.createdAt).toLocaleDateString() : '-'}</span>
               </li>
             ))}
@@ -196,7 +196,7 @@ export default function UserDetailPage() {
       <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl overflow-hidden mb-8">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-800/50 border-b border-slate-700/50">
-            <tr><th className="p-4 text-slate-400 font-medium">USD</th><th className="p-4 text-slate-400 font-medium">Coins</th><th className="p-4 text-slate-400 font-medium">Status</th><th className="p-4 text-slate-400 font-medium">Date</th></tr>
+            <tr><th className="p-4 text-slate-400 font-medium">USDT</th><th className="p-4 text-slate-400 font-medium">Coins</th><th className="p-4 text-slate-400 font-medium">Status</th><th className="p-4 text-slate-400 font-medium">Date</th></tr>
           </thead>
           <tbody>
             {(purchases?.data || []).length === 0 ? (

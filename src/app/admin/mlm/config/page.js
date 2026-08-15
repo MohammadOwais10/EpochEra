@@ -125,7 +125,7 @@ export default function AdminMlmConfigPage() {
             <form onSubmit={handleSave} className="space-y-4">
               <input
                 type="text"
-                placeholder="USD Commission"
+                placeholder="USDT Commission"
                 value={form.usdCommission}
                 onChange={(e) => setForm({ ...form, usdCommission: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white placeholder-slate-400 focus:border-[#B48811]/50 focus:ring-1 focus:ring-[#B48811]/50 focus:outline-none transition-all"
@@ -166,7 +166,7 @@ export default function AdminMlmConfigPage() {
             <thead className="bg-slate-800/50 border-b border-slate-700/50">
               <tr>
                 <th className="p-4 text-slate-400 font-medium">Generation</th>
-                <th className="p-4 text-slate-400 font-medium">USD Commission</th>
+                <th className="p-4 text-slate-400 font-medium">USDT Commission</th>
                 <th className="p-4 text-slate-400 font-medium">Epoch Coin</th>
                 <th className="p-4 text-slate-400 font-medium">Active</th>
                 <th className="p-4 text-slate-400 font-medium">Actions</th>

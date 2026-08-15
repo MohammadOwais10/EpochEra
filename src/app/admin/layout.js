@@ -1,24 +1,32 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { AdminSidebar } from '@/components/AdminSidebar'
 import { isTokenExpired, clearAuthTokens, isAdmin } from '@/lib/utils'
 import { getUserById } from '@/lib/api'
 import { Shield, Menu, X, LogOut } from 'lucide-react'
 
+const PUBLIC_ADMIN_PATHS = ['/admin/signin']
+
 export default function AdminLayout({ children }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [checking, setChecking] = useState(true)
   const [user, setUser] = useState(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
+    if (PUBLIC_ADMIN_PATHS.includes(pathname)) {
+      setChecking(false)
+      return
+    }
+
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
     if (!token || isTokenExpired() || !isAdmin()) {
       clearAuthTokens()
-      router.push('/signin')
+      router.push('/admin/signin')
     } else {
       setChecking(false)
       // Fetch user data for header
@@ -28,7 +36,7 @@ export default function AdminLayout({ children }) {
         }
       })
     }
-  }, [router])
+  }, [router, pathname])
 
   if (checking) {
     return (
@@ -36,6 +44,10 @@ export default function AdminLayout({ children }) {
         Loading...
       </div>
     )
+  }
+
+  if (PUBLIC_ADMIN_PATHS.includes(pathname)) {
+    return <>{children}</>
   }
 
   return (

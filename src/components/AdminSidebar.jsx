@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Layers, Users, ScrollText, Wallet, Repeat, Pickaxe, Settings, CreditCard, MessageCircle, LogOut } from 'lucide-react'
+import { Layers, Users, ScrollText, Wallet, Repeat, Pickaxe, Settings, CreditCard, MessageCircle, LogOut, ShieldCheck, Coins } from 'lucide-react'
 import { clearAuthTokens } from '@/lib/utils'
 
 const menuItems = [
@@ -12,7 +12,9 @@ const menuItems = [
   { icon: Wallet, label: 'Wallet Transactions', path: '/admin/wallet/transactions' },
   { icon: Repeat, label: 'Sell Requests', path: '/admin/widget-b/sell-requests' },
   { icon: Pickaxe, label: 'Mining Content', path: '/admin/mining/content' },
+  { icon: ShieldCheck, label: 'Social Verifications', path: '/admin/mining/social-verifications' },
   { icon: Settings, label: 'MLM Config', path: '/admin/mlm/config' },
+  { icon: Coins, label: 'Coin Config', path: '/admin/coin-config' },
   { icon: CreditCard, label: 'Deposit Wallet', path: '/admin/deposit-wallet' },
   { icon: MessageCircle, label: 'Support', path: '/admin/tickets' },
 ]

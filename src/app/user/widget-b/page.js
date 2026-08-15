@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
+import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, erc20Abi } from 'viem'
 import {
@@ -18,13 +18,14 @@ import {
   cancelWidgetBSellRequest,
 } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
-import { Copy, Check, Coins, Wallet, ArrowUp, ArrowDown, History, X, Shield, Send, DollarSign, Package, Clock, AlertCircle, Percent, TrendingUp } from 'lucide-react'
+import { Copy, Check, Coins, Wallet, ArrowUp, ArrowDown, History, X, Shield, Send, DollarSign, Package, Clock, AlertCircle, Percent, TrendingUp, Minus, Plus, LogOut } from 'lucide-react'
 import Card from '@/components/ui/Card'
 
 export default function WidgetBPage() {
   const router = useRouter()
   const { open } = useAppKit()
   const { address, isConnected } = useAppKitAccount()
+  const { disconnect } = useDisconnect()
   const { data: txHash, writeContract, isPending: isWriting, isError: isWriteError, error: writeError } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash })
 
@@ -275,6 +276,25 @@ export default function WidgetBPage() {
             </motion.div>
           </motion.div>
 
+          {/* Wallet Connection Status */}
+          <div className="mb-6 flex items-center justify-end gap-3">
+            {isConnected ? (
+              <>
+                <span className="text-slate-400 text-sm">Connected:</span>
+                <span className="text-white font-mono text-sm">
+                  {address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : ''}
+                </span>
+                <Button onClick={() => disconnect()} variant="outline" size="sm" className="rounded-full text-red-400 border-red-400/30 hover:bg-red-400/10">
+                  <LogOut className="w-4 h-4 mr-2" /> Disconnect
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => open()} variant="outline" size="sm" className="rounded-full">
+                <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
+              </Button>
+            )}
+          </div>
+
           {/* Error/Success Messages */}
           {error && (
             <motion.div
@@ -349,7 +369,7 @@ export default function WidgetBPage() {
                     <span>Rate</span>
                   </div>
                 </div>
-                <p className="text-slate-400 text-sm font-medium mb-1">Coins per USD</p>
+                <p className="text-slate-400 text-sm font-medium mb-1">Coins per USDT</p>
                 <p className="text-3xl font-bold text-white tracking-tight">{config?.coinsPerUsd ?? '0'}</p>
                 <p className="text-slate-500 text-xs mt-2">Exchange rate</p>
               </div>
@@ -399,18 +419,108 @@ export default function WidgetBPage() {
                   <p className="text-slate-400 text-sm">Purchase Widget B coins</p>
                 </div>
               </div>
+              {/* Calculator - always visible */}
+              <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-[#B48811]/10 to-transparent border border-[#B48811]/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-slate-400 text-sm">Rate:</span>
+                  <span className="text-slate-300 text-sm">1 USDT = {config?.coinsPerUsd ?? 0} coins</span>
+                </div>
+                {buyAmount && parseFloat(buyAmount) > 0 ? (
+                  <>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-slate-400 text-sm">You pay:</span>
+                      <span className="text-white font-bold">${parseFloat(buyAmount).toFixed(2)} USDT</span>
+                    </div>
+                    <div className="border-t border-slate-700/50 pt-2 mt-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#EBD197] text-sm font-medium">You receive:</span>
+                        <span className="text-[#EBD197] font-bold text-lg flex items-center gap-1">
+                          <Coins className="w-4 h-4" />
+                          {(parseFloat(buyAmount) * parseFloat(config?.coinsPerUsd ?? 0)).toLocaleString(undefined, { maximumFractionDigits: 8 })}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-slate-500 text-xs mt-1">Enter USDT amount below to see how many coins you get</p>
+                )}
+              </div>
+
               {!pendingPayment ? (
                 <>
-                  <input
-                    type="text"
-                    placeholder="USD amount"
-                    value={buyAmount}
-                    onChange={(e) => setBuyAmount(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white mb-4 focus:border-[#B48811] focus:outline-none transition-colors"
-                  />
-                  <Button onClick={handleBuy} disabled={processing} variant="primary" className="w-full rounded-full">
-                    {processing ? 'Processing...' : 'Buy Coins'}
-                  </Button>
+                  <div className="flex items-center gap-2 mb-2">
+                    <button
+                      onClick={() => setBuyAmount(String(Math.max(100, (parseFloat(buyAmount) || 100) - 1)))}
+                      className="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-800/50 border border-slate-700/50 text-[#EBD197] hover:bg-slate-700/50 hover:border-[#B48811]/50 transition-all flex items-center justify-center"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    <input
+                      type="number"
+                      min="100"
+                      step="1"
+                      placeholder="Min 100 USDT"
+                      value={buyAmount}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setBuyAmount(val)
+                        if (val && parseFloat(val) < 100) {
+                          setError('Minimum purchase amount is $100 USDT')
+                        } else {
+                          setError('')
+                        }
+                      }}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white text-center text-lg font-bold focus:border-[#B48811] focus:outline-none transition-colors"
+                    />
+                    <button
+                      onClick={() => setBuyAmount(String((parseFloat(buyAmount) || 100) + 1))}
+                      className="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-800/50 border border-slate-700/50 text-[#EBD197] hover:bg-slate-700/50 hover:border-[#B48811]/50 transition-all flex items-center justify-center"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <p className="text-slate-500 text-xs mb-4 text-center">Minimum purchase: $100 USDT</p>
+                  {!isConnected ? (
+                    <Button
+                      onClick={() => open()}
+                      disabled={processing}
+                      variant="primary"
+                      className="w-full rounded-full"
+                    >
+                      <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
+                    </Button>
+                  ) : (
+                    <>
+                      <div className="mb-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-400 text-xs">Connected:</span>
+                          <span className="text-white font-mono text-sm">{address?.substring(0, 8)}...{address?.substring(address.length - 6)}</span>
+                        </div>
+                        <button
+                          onClick={() => disconnect()}
+                          className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs"
+                        >
+                          <LogOut className="w-3 h-3" /> Disconnect
+                        </button>
+                      </div>
+                      <Button
+                        onClick={() => {
+                          const amt = parseFloat(buyAmount) || 0
+                          if (amt < 100) {
+                            setError('Minimum purchase amount is $100 USDT')
+                            return
+                          }
+                          setError('')
+                          handleBuy()
+                        }}
+                        disabled={processing || !buyAmount || parseFloat(buyAmount) < 100}
+                        variant="primary"
+                        className="w-full rounded-full"
+                      >
+                        {processing ? 'Processing...' : 'Buy Coins'}
+                      </Button>
+                    </>
+                  )}
                 </>
               ) : (
                 <div className="space-y-4">
@@ -442,13 +552,72 @@ export default function WidgetBPage() {
                 </div>
               </div>
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Coin amount"
-                  value={sellAmount}
-                  onChange={(e) => setSellAmount(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white focus:border-[#B48811] focus:outline-none transition-colors"
-                />
+                {/* Sell Calculator */}
+                <div className="p-4 rounded-xl bg-gradient-to-br from-[#B48811]/10 to-transparent border border-[#B48811]/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-slate-400 text-sm">Sell Rate:</span>
+                    <span className="text-slate-300 text-sm">{config?.sellPercent ?? 0}% of coin value</span>
+                  </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-slate-400 text-sm">Coin Price:</span>
+                    <span className="text-slate-300 text-sm">1 coin = ${(1 / parseFloat(config?.coinsPerUsd ?? 1)).toFixed(4)} USDT</span>
+                  </div>
+                  {sellAmount && parseFloat(sellAmount) > 0 ? (
+                    <>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-slate-400 text-sm">You sell:</span>
+                        <span className="text-white font-bold flex items-center gap-1">
+                          <Coins className="w-4 h-4" />
+                          {parseFloat(sellAmount).toLocaleString()} coins
+                        </span>
+                      </div>
+                      <div className="border-t border-slate-700/50 pt-2 mt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[#EBD197] text-sm font-medium">You receive:</span>
+                          <span className="text-[#EBD197] font-bold text-lg">
+                            ${((parseFloat(sellAmount) / parseFloat(config?.coinsPerUsd ?? 1)) * (parseFloat(config?.sellPercent ?? 0) / 100)).toFixed(2)} USDT
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-slate-500 text-xs mt-2">
+                        ({config?.sellPercent ?? 0}% of ${(parseFloat(sellAmount) / parseFloat(config?.coinsPerUsd ?? 1)).toFixed(2)} base value)
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-slate-500 text-xs mt-1">Enter coin amount below to see how much USDT you get</p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSellAmount(String(Math.max(1, (parseFloat(sellAmount) || 1) - 1)))}
+                    className="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-800/50 border border-slate-700/50 text-[#EBD197] hover:bg-slate-700/50 hover:border-[#B48811]/50 transition-all flex items-center justify-center"
+                  >
+                    <Minus className="w-5 h-5" />
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="Coin amount"
+                    value={sellAmount}
+                    onChange={(e) => setSellAmount(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white text-center text-lg font-bold focus:border-[#B48811] focus:outline-none transition-colors"
+                  />
+                  <button
+                    onClick={() => setSellAmount(String((parseFloat(sellAmount) || 0) + 1))}
+                    className="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-800/50 border border-slate-700/50 text-[#EBD197] hover:bg-slate-700/50 hover:border-[#B48811]/50 transition-all flex items-center justify-center"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {balance && (
+                  <p className="text-slate-500 text-xs text-center">
+                    Available: {balance.availableBalance?.toLocaleString() ?? '0'} coins
+                  </p>
+                )}
+
                 <input
                   type="text"
                   placeholder="Network (BSC)"
@@ -463,7 +632,23 @@ export default function WidgetBPage() {
                   onChange={(e) => setSellAddress(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white focus:border-[#B48811] focus:outline-none transition-colors"
                 />
-                <Button onClick={handleSell} disabled={processing} variant="primary" className="w-full rounded-full">
+                <Button
+                  onClick={() => {
+                    if (!sellAmount || parseFloat(sellAmount) <= 0) {
+                      setError('Enter coin amount to sell')
+                      return
+                    }
+                    if (balance && parseFloat(sellAmount) > parseFloat(balance.availableBalance)) {
+                      setError('Insufficient coin balance')
+                      return
+                    }
+                    setError('')
+                    handleSell()
+                  }}
+                  disabled={processing || !sellAmount || parseFloat(sellAmount) <= 0}
+                  variant="primary"
+                  className="w-full rounded-full"
+                >
                   {processing ? 'Processing...' : 'Sell Coins'}
                 </Button>
               </div>
@@ -508,7 +693,7 @@ export default function WidgetBPage() {
                           </div>
                           <div>
                             <p className="font-medium text-white">{p.coinAmount} coins</p>
-                            <p className="text-slate-400 text-sm">{p.usdAmount ?? p.amountUsd} USD</p>
+                            <p className="text-slate-400 text-sm">{p.usdAmount ?? p.amountUsd} USDT</p>
                           </div>
                         </div>
                         <div className="text-right">

@@ -143,7 +143,7 @@ export default function ProfitCalculator() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-zinc-300">
-                USD Equivalent
+                USDT Equivalent
               </span>
             </div>
 

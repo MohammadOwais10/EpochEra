@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { listAdminMiningContent, createAdminMiningContent, updateAdminMiningContent, deleteAdminMiningContent } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
-import { FileText, Coins, Plus, Edit, Trash2, CheckCircle, AlertCircle } from 'lucide-react'
+import { FileText, Coins, Plus, Edit, Trash2, CheckCircle, AlertCircle, Clock } from 'lucide-react'
 
 export default function AdminMiningContentPage() {
   const router = useRouter()
@@ -75,6 +75,21 @@ export default function AdminMiningContentPage() {
     } catch (err) {
       setError(err.response?.data?.error?.message || err.message || 'Delete failed')
     }
+  }
+
+  // Compute 24h window status for a content card
+  const getWindowStatus = (c) => {
+    if (!c.isActive) return { label: 'Inactive', color: 'bg-slate-700/50 text-slate-400 border-slate-600/30' }
+    const startAt = c.publishedAt ? new Date(c.publishedAt).getTime() : new Date(c.createdAt).getTime()
+    const endAt = startAt + 24 * 60 * 60 * 1000
+    const now = Date.now()
+    if (now < startAt) return { label: 'Scheduled', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
+    if (now >= endAt) return { label: 'Deactivated', color: 'bg-red-500/10 text-red-400 border-red-500/20' }
+    const diff = endAt - now
+    const h = Math.floor(diff / 3600000)
+    const m = Math.floor((diff % 3600000) / 60000)
+    const s = Math.floor((diff % 60000) / 1000)
+    return { label: `Active - ${h}h ${m}m ${s}s`, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' }
   }
 
   if (loading) return (
@@ -213,34 +228,39 @@ export default function AdminMiningContentPage() {
             </div>
           ) : (
             <ul className="divide-y divide-slate-700/30">
-              {content.map((c) => (
-                <li key={c.id} className="p-4 hover:bg-slate-800/30 transition-colors">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-bold text-white">{c.title}</p>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                          c.isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-700/50 text-slate-400 border-slate-600/30'
-                        }`}>
-                          {c.isActive ? 'Active' : 'Inactive'}
-                        </span>
+              {content.map((c) => {
+                const win = getWindowStatus(c)
+                return (
+                  <li key={c.id} className="p-4 hover:bg-slate-800/30 transition-colors">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <p className="font-bold text-white">{c.title}</p>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${win.color}`}>
+                            {win.label}
+                          </span>
+                        </div>
+                        <p className="text-slate-500 text-sm flex items-center gap-1">
+                          <Coins className="w-4 h-4 text-[#EBD197]" />
+                          Reward: {c.rewardCoins}
+                        </p>
+                        <p className="text-slate-500 text-xs flex items-center gap-1 mt-1">
+                          <Clock className="w-3 h-3" />
+                          Published: {c.publishedAt ? new Date(c.publishedAt).toLocaleString() : new Date(c.createdAt).toLocaleString()}
+                        </p>
                       </div>
-                      <p className="text-slate-500 text-sm flex items-center gap-1">
-                        <Coins className="w-4 h-4 text-[#EBD197]" />
-                        Reward: {c.rewardCoins}
-                      </p>
+                      <div className="flex gap-2">
+                        <Button onClick={() => handleEdit(c)} variant="outline" size="sm" className="rounded-full hover:bg-slate-700/50">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button onClick={() => handleDelete(c.id)} variant="outline" size="sm" className="rounded-full hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button onClick={() => handleEdit(c)} variant="outline" size="sm" className="rounded-full hover:bg-slate-700/50">
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button onClick={() => handleDelete(c.id)} variant="outline" size="sm" className="rounded-full hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                )
+              })}
             </ul>
           )}
         </Card>

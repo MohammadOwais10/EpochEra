@@ -75,10 +75,28 @@ export const isTokenExpired = () => {
 export const clearAuthTokens = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('refreshToken')
+  clearRoleCookie()
   // Dispatch event to notify components of auth state change
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('auth-state-changed'))
   }
+}
+
+const setRoleCookie = (accessToken) => {
+  if (typeof window === 'undefined') return
+  try {
+    const payload = decodeToken(accessToken)
+    const role = payload?.role || ''
+    const expires = payload?.exp ? new Date(payload.exp * 1000).toUTCString() : ''
+    document.cookie = `role=${role}; path=/; ${expires ? `expires=${expires}; ` : ''}SameSite=Lax`
+  } catch {
+    // ignore
+  }
+}
+
+const clearRoleCookie = () => {
+  if (typeof window === 'undefined') return
+  document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
 }
 
 // Utility function to set auth tokens
@@ -87,6 +105,7 @@ export const setAuthTokens = (accessToken, refreshToken) => {
   if (refreshToken) {
     localStorage.setItem('refreshToken', refreshToken)
   }
+  setRoleCookie(accessToken)
   // Dispatch event to notify components of auth state change
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('auth-state-changed'))
@@ -99,10 +118,12 @@ export const setAuthTokensWithoutEvent = (accessToken, refreshToken) => {
   if (refreshToken) {
     localStorage.setItem('refreshToken', refreshToken)
   }
+  setRoleCookie(accessToken)
 }
 
 // Export for use in api.js (without dispatching event to avoid duplicate events)
 export const clearAuthTokensWithoutEvent = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('refreshToken')
+  clearRoleCookie()
 }

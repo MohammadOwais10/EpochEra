@@ -5,6 +5,7 @@ import ContextProvider from '@/context'
 import Analytics from '@/components/Analytics'
 import { Navigation } from "./components/Navbar";
 import { headers } from 'next/headers'
+import { Toaster } from 'react-hot-toast'
 
 export const metadata = {
   title: "EpochEra | Decentralized Prediction Protocol on TON",
@@ -67,8 +68,17 @@ export default async function RootLayout({ children }) {
         </ContextProvider>
         <ScrollToTop />
         <Analytics />
-
-
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#1e293b',
+              color: '#fff',
+              border: '1px solid rgba(180, 136, 17, 0.5)',
+            },
+          }}
+        />
       </body>
     </html>
   );

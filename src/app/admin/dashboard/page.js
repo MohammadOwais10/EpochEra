@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import StatCard from '@/components/ui/StatCard'
 import { getUserById, getAdminDashboard } from '@/lib/api'
-import { Coins, Wallet, Repeat, Users, TrendingUp, Package, ScrollText, CreditCard, Shield, X, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { Coins, Wallet, Repeat, Users, TrendingUp, Package, ScrollText, CreditCard, Shield, X, Clock, CheckCircle, XCircle, DollarSign } from 'lucide-react'
 import { clearAuthTokens, isAdmin } from '@/lib/utils'
 
 const containerVariants = {
@@ -136,11 +136,11 @@ export default function AdminDashboard() {
           </div>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <StatCard
             icon={<Coins className="w-6 h-6" />}
             label="Total Coins in Circulation"
-            value={((stats?.widgetA?.totalCoins || 0) + (stats?.widgetB?.totalCoins || 0)).toLocaleString()}
+            value={((stats?.widgetA?.totalCoins || 0)).toLocaleString()}
           />
           <StatCard
             icon={<Package className="w-6 h-6" />}
@@ -156,8 +156,8 @@ export default function AdminDashboard() {
             icon={<Repeat className="w-6 h-6" />}
             label="Pending Requests"
             value={stats?.sellRequests?.pending || 0}
-          />
-        </div>
+          /> */}
+        {/* </div> */}
       </motion.div>
 
       {/* Coin Supply Section */}
@@ -183,7 +183,39 @@ export default function AdminDashboard() {
           </div>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+          {/* USD Commission Card */}
+          <Card className="p-6 group relative overflow-hidden border-[#B48811]/30 hover:border-[#B48811]/50">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <DollarSign className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">USDT Commission</h3>
+                    <p className="text-slate-400 text-xs">MLM Rewards</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-[#EBD197]">${(parseFloat(stats?.usdCommission?.total || 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  <p className="text-slate-400 text-xs">Total USDT</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-700/50">
+                <div className="p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+                  <p className="text-slate-400 text-xs mb-1">Source</p>
+                  <p className="text-lg font-semibold text-white">Level 1-12</p>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+                  <p className="text-slate-400 text-xs mb-1">Status</p>
+                  <p className="text-lg font-semibold text-white">Non-Withdrawable</p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
           <Card className="p-6 group relative overflow-hidden border-[#B48811]/30 hover:border-[#B48811]/50">
             <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="relative">
@@ -204,12 +236,12 @@ export default function AdminDashboard() {
               </div>
               <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-700/50">
                 <div className="p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
-                  <p className="text-slate-400 text-xs mb-1">Direct Purchases</p>
-                  <p className="text-lg font-semibold text-white">{stats?.widgetB?.totalDirectCoinPurchases?.toLocaleString() || '0'}</p>
+                  <p className="text-slate-400 text-xs mb-1">Membership Buyers</p>
+                  <p className="text-lg font-semibold text-white">{stats?.widgetA?.totalMembershipBuyers?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
-                  <p className="text-slate-400 text-xs mb-1">Sponsor Rewards</p>
-                  <p className="text-lg font-semibold text-white">{stats?.widgetB?.totalDirectSponsorRewards?.toLocaleString() || '0'}</p>
+                  <p className="text-slate-400 text-xs mb-1">Mining Users</p>
+                  <p className="text-lg font-semibold text-white">{stats?.widgetA?.totalMiningUsers?.toLocaleString() || '0'}</p>
                 </div>
               </div>
             </div>
@@ -354,7 +386,7 @@ export default function AdminDashboard() {
           />
           <StatCard
             icon={<CreditCard className="w-6 h-6" />}
-            label="Coins per USD"
+            label="Coins per USDT"
             value={stats?.coinConfig?.coinsPerUsd || '0'}
           />
           <StatCard

@@ -2,17 +2,18 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
+import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, erc20Abi } from 'viem'
 import { listAdminSellRequests, approveSellRequest, processingSellRequest, completeSellRequest, rejectSellRequest, getDepositWallet } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
-import { Copy, Check, Repeat } from 'lucide-react'
+import { Copy, Check, Repeat, Wallet, LogOut } from 'lucide-react'
 
 export default function AdminSellRequestsPage() {
   const router = useRouter()
   const { open } = useAppKit()
-  const { isConnected } = useAppKitAccount()
+  const { address, isConnected } = useAppKitAccount()
+  const { disconnect } = useDisconnect()
   const { data: txHash, writeContract, isPending: isWriting, isError: isWriteError, error: writeError } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash })
 
@@ -144,6 +145,9 @@ export default function AdminSellRequestsPage() {
       if (!isConnected) return <Button onClick={() => open()} variant="primary" size="sm" className="rounded-full">Connect Wallet</Button>
       return <Button onClick={() => handlePay(r)} disabled={!usdtContract} variant="primary" size="sm" className="rounded-full">Pay {r.payoutUsdValue} USDT</Button>
     }
+    if (!isConnected) {
+      return <Button onClick={() => handlePay(r)} variant="primary" size="sm" className="rounded-full mr-2">Connect Wallet</Button>
+    }
     return <Button onClick={() => handlePay(r)} variant="primary" size="sm" className="rounded-full mr-2">Approve & Pay</Button>
   }
 
@@ -173,6 +177,25 @@ export default function AdminSellRequestsPage() {
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Sell Requests</h1>
           <p className="text-slate-400 text-sm">Manage widget B sell requests and payouts</p>
         </div>
+      </div>
+
+      {/* Wallet Connection Status */}
+      <div className="mb-6 flex items-center justify-end gap-3">
+        {isConnected ? (
+          <>
+            <span className="text-slate-400 text-sm">Connected:</span>
+            <span className="text-white font-mono text-sm">
+              {address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : ''}
+            </span>
+            <Button onClick={() => disconnect()} variant="outline" size="sm" className="rounded-full text-red-400 border-red-400/30 hover:bg-red-400/10">
+              <LogOut className="w-4 h-4 mr-2" /> Disconnect
+            </Button>
+          </>
+        ) : (
+          <Button onClick={() => open()} variant="outline" size="sm" className="rounded-full">
+            <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
+          </Button>
+        )}
       </div>
 
       {error && (

@@ -138,7 +138,7 @@ export default function WidgetAPage() {
                   </div>
                 </div>
                 <p className="text-slate-400 text-sm font-medium mb-1">Available Balance</p>
-                <p className="text-3xl font-bold text-white tracking-tight">{balance?.availableBalance ?? '0'}</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{balance?.available ?? '0'}</p>
                 <p className="text-slate-500 text-xs mt-2">Your current Widget A balance</p>
               </div>
             </motion.div>

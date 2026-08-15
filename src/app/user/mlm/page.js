@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { getMySponsor, getMyDirectReferrals, getMlmStatistics } from '@/lib/api'
-import { Users, UserPlus, DollarSign, Mail, User, Building2, TrendingUp, X } from 'lucide-react'
+import { Users, UserPlus, DollarSign, Coins, Mail, User, Building2, TrendingUp, X } from 'lucide-react'
 import Card from '@/components/ui/Card'
 
 export default function MlmPage() {
@@ -118,7 +118,7 @@ export default function MlmPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="grid md:grid-cols-3 gap-6 mb-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -145,7 +145,7 @@ export default function MlmPage() {
               </div>
             </motion.div>
 
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: 0.1 }}
@@ -168,7 +168,7 @@ export default function MlmPage() {
                 <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalTeamCount ?? '0'}</p>
                 <p className="text-slate-500 text-xs mt-2">Your entire network</p>
               </div>
-            </motion.div>
+            </motion.div> */}
 
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -186,12 +186,62 @@ export default function MlmPage() {
                   </div>
                   <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
                     <TrendingUp className="w-4 h-4" />
-                    <span>Earnings</span>
+                    <span>USDT</span>
                   </div>
                 </div>
-                <p className="text-slate-400 text-sm font-medium mb-1">Total Earnings</p>
-                <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalEarnings ?? '0'}</p>
+                <p className="text-slate-400 text-sm font-medium mb-1">USDT Earnings</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalUsdEarnings ?? '0'}</p>
                 <p className="text-slate-500 text-xs mt-2">From your network</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <Coins className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Widget A</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Epoch Coin Earnings</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalWidgetAEarnings ?? '0'}</p>
+                <p className="text-slate-500 text-xs mt-2">From your network</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 hover:border-[#B48811]/40 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B48811]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-black/10 group-hover:scale-110 transition-transform duration-300">
+                    <Coins className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-[#EBD197] text-sm font-medium">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Widget B</span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-sm font-medium mb-1">Referral Coin Earnings</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{stats?.totalWidgetBEarnings ?? '0'}</p>
+                <p className="text-slate-500 text-xs mt-2">From direct referrals</p>
               </div>
             </motion.div>
           </motion.div>
@@ -288,6 +338,65 @@ export default function MlmPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </Card>
+          </motion.div>
+
+          {/* Widget B Referral Rewards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="flex items-center gap-4 mb-6"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <Coins className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">Widget B Referral Coins</h2>
+                <p className="text-slate-400 text-sm">Coins earned from direct referral purchases</p>
+              </div>
+            </motion.div>
+
+            <Card className="overflow-hidden">
+              {(stats?.widgetBRewards || []).length === 0 ? (
+                <div className="p-8 text-center">
+                  <Coins className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">No Widget B referral rewards yet</p>
+                  <p className="text-slate-400 text-sm mt-2">Your direct referrals' purchases will appear here</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-800/50 border-b border-slate-700/50">
+                      <tr>
+                        <th className="p-4 text-slate-400 font-medium">From User</th>
+                        <th className="p-4 text-slate-400 font-medium">Coins</th>
+                        <th className="p-4 text-slate-400 font-medium">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.widgetBRewards.map((r, i) => (
+                        <tr key={i} className="border-t border-slate-700/30 hover:bg-slate-800/30 transition-colors">
+                          <td className="p-4">
+                            <p className="font-medium text-white">
+                              {r.fromUser ? (r.fromUser.firstName ? `${r.fromUser.firstName} ${r.fromUser.lastName || ''}` : r.fromUser.email) : 'Unknown'}
+                            </p>
+                            {r.fromUser?.username && <p className="text-slate-500 text-xs">@{r.fromUser.username}</p>}
+                          </td>
+                          <td className="p-4 font-semibold text-[#EBD197]">+{r.amount}</td>
+                          <td className="p-4 text-slate-300">{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </Card>

@@ -61,7 +61,7 @@ function HomePage() {
   }
 
   const commissionData = [
-    { level: "Self", target: "-", commission: "2500", bonus: "2500" },
+    { level: "Self", target: "-", commission: "", bonus: "2500" },
     { level: "Level 1", target: "Direct Referrals", commission: "10", bonus: "2500" },
     { level: "Level 2", target: "Tier 2 Team", commission: "3", bonus: "750" },
     { level: "Level 3", target: "Tier 3 Team", commission: "1.5", bonus: "375" },

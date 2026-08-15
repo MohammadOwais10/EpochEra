@@ -645,7 +645,7 @@ export default function UserDashboard() {
               >
                 <StatCard
                   icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><CircleDollarSign className="w-7 h-7 text-white" /></div>}
-                  label="USD Commission"
+                  label="USDT Commission"
                   value={formatCurrency(stats?.wallets?.usdCommission)}
                   className="hover:border-[#B48811]/40"
                 />
@@ -660,7 +660,7 @@ export default function UserDashboard() {
                 <StatCard
                   icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Box className="w-7 h-7 text-white" /></div>}
                   label="Widget A"
-                  value={formatNumber(stats?.wallets?.widgetA)}
+                  value={formatNumber(stats?.wallets?.widgetA,"coin")}
                   className="hover:border-[#B48811]/40"
                 />
               </motion.div>
@@ -797,7 +797,7 @@ export default function UserDashboard() {
                       <TrendingUp className="w-7 h-7 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-slate-400 text-sm mb-1">Coins per USD</p>
+                      <p className="text-slate-400 text-sm mb-1">Coins per USDT</p>
                       <p className="text-3xl font-bold text-white">{formatNumber(stats?.widgetB?.coinsPerUsd)}</p>
                       <div className="flex items-center gap-1 mt-3 text-[#EBD197] text-sm font-medium">
                         <ArrowUpRight className="w-4 h-4" />

@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
+import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { parseUnits, erc20Abi } from 'viem'
+import { parseUnits, erc20Abi, createWalletClient, custom } from 'viem'
+import { bscTestnet as bscTestnetViem } from 'viem/chains'
 import { motion } from 'framer-motion'
 import { getMyMembership, getMembershipHistory, purchaseMembership, verifyDeposit } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
-import { Copy, Check, Crown, Clock, Wallet, CreditCard, History, Shield, X } from 'lucide-react'
+import { Copy, Check, Crown, Clock, Wallet, CreditCard, History, Shield, X, LogOut, CheckCircle } from 'lucide-react'
 import Card from '@/components/ui/Card'
 
 export default function MembershipPage() {
   const router = useRouter()
   const { open } = useAppKit()
   const { address, isConnected } = useAppKitAccount()
+  const { disconnect } = useDisconnect()
   const { data: txHash, writeContract, isPending: isWriting, isError: isWriteError, error: writeError } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash })
 
@@ -22,6 +24,7 @@ export default function MembershipPage() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState(false)
+  const [isPaying, setIsPaying] = useState(false)
   const [verifying, setVerifying] = useState(false)
   const [error, setError] = useState('')
   const [msg, setMsg] = useState('')
@@ -29,6 +32,7 @@ export default function MembershipPage() {
   const [txHashManual, setTxHashManual] = useState('')
   const [senderAddressManual, setSenderAddressManual] = useState('')
   const [copied, setCopied] = useState('')
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   const fetchData = async () => {
     try {
@@ -77,6 +81,7 @@ export default function MembershipPage() {
       if (!result.success) throw new Error(result.error?.message || 'Verification failed')
       setMsg(result.data.message || 'Deposit verified. Your membership will be activated shortly.')
       setPurchaseData(null)
+      setShowSuccessModal(true)
       await fetchData()
     } catch (err) {
       setError(err.response?.data?.error?.message || err.message || 'Verification failed')
@@ -109,8 +114,24 @@ export default function MembershipPage() {
 
   const handlePay = () => {
     setError('')
+    setMsg('')
     if (!isConnected) {
-      open()
+      console.log('[handlePay] opening AppKit modal, open fn:', typeof open)
+      try {
+        open()
+        setTimeout(() => {
+          const modalEl = document.querySelector('w3m-modal')
+          console.log('[handlePay] w3m-modal element:', modalEl)
+          if (modalEl) {
+            console.log('[handlePay] modal open attr:', modalEl.open)
+            console.log('[handlePay] modal classList:', modalEl.classList.toString())
+            console.log('[handlePay] modal shadowRoot:', !!modalEl.shadowRoot)
+          }
+        }, 500)
+      } catch (err) {
+        console.error('Failed to open AppKit modal:', err)
+        setError('Wallet modal could not be opened. Please use manual deposit.')
+      }
       return
     }
     if (!purchaseData?.usdtContract || !purchaseData?.depositWallet) {
@@ -123,6 +144,77 @@ export default function MembershipPage() {
       functionName: 'transfer',
       args: [purchaseData.depositWallet, parseUnits(String(purchaseData.amountUsd), 18)],
     })
+  }
+
+  const handlePayDirect = async () => {
+    setError('')
+    setMsg('')
+    setIsPaying(true)
+    try {
+      if (typeof window === 'undefined' || !window.ethereum) {
+        throw new Error('MetaMask or an injected wallet is not installed')
+      }
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      const account = accounts?.[0]
+      if (!account) throw new Error('No account selected')
+
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x61' }],
+        })
+      } catch (switchErr) {
+        if (switchErr?.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x61',
+              chainName: 'BSC Testnet',
+              nativeCurrency: { name: 'BNB', symbol: 'tBNB', decimals: 18 },
+              rpcUrls: ['https://bsc-testnet-rpc.publicnode.com'],
+              blockExplorerUrls: ['https://testnet.bscscan.com'],
+            }],
+          })
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x61' }],
+          })
+        } else {
+          throw switchErr
+        }
+      }
+
+      if (!purchaseData?.usdtContract || !purchaseData?.depositWallet) {
+        setError('Payment details not loaded')
+        setIsPaying(false)
+        return
+      }
+
+      const client = createWalletClient({
+        chain: bscTestnetViem,
+        transport: custom(window.ethereum),
+      })
+
+      const hash = await client.writeContract({
+        address: purchaseData.usdtContract,
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [purchaseData.depositWallet, parseUnits(String(purchaseData.amountUsd), 18)],
+        account,
+      })
+
+      setMsg('Transaction sent. Verifying...')
+      await handleVerifyAuto(hash, account)
+    } catch (err) {
+      const message = err?.message || 'Transaction failed or rejected'
+      if (err?.code === 4902 || message?.includes('wallet_addEthereumChain')) {
+        setError('Please add BSC testnet network to MetaMask')
+      } else {
+        setError(message)
+      }
+    } finally {
+      setIsPaying(false)
+    }
   }
 
   const handleVerifyManual = async (e) => {
@@ -141,6 +233,7 @@ export default function MembershipPage() {
       setPurchaseData(null)
       setTxHashManual('')
       setSenderAddressManual('')
+      setShowSuccessModal(true)
       await fetchData()
     } catch (err) {
       setError(err.response?.data?.error?.message || err.message || 'Verification failed')
@@ -251,7 +344,7 @@ export default function MembershipPage() {
                   <div className="grid md:grid-cols-2 gap-4 mt-6">
                     <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
                       <p className="text-slate-400 text-sm mb-1">Investment Amount</p>
-                      <p className="text-2xl font-bold text-white">{membership.active.amountUsd} USD</p>
+                      <p className="text-2xl font-bold text-white">{membership.active.amountUsd} USDT</p>
                     </div>
                     {membership.active.createdAt && (
                       <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
@@ -313,7 +406,7 @@ export default function MembershipPage() {
                   <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
                     <p className="text-slate-400 text-sm mb-2">Payment Details</p>
                     <p className="text-white">
-                      Send <strong className="text-[#EBD197]">{purchaseData.amountUsd} USD</strong> in USDT to the deposit wallet on <strong className="text-[#EBD197]">{purchaseData.network?.toUpperCase()}</strong>
+                      Send <strong className="text-[#EBD197]">{purchaseData.amountUsd} USDT</strong> to the deposit wallet on <strong className="text-[#EBD197]">{purchaseData.network?.toUpperCase()}</strong>
                     </p>
                   </div>
 
@@ -333,7 +426,7 @@ export default function MembershipPage() {
 
                     <div className="bg-slate-900/50 border border-slate-700/50 rounded-xl p-4">
                       <p className="text-slate-400 text-sm mb-2">Amount to Send</p>
-                      <p className="font-mono text-lg text-white">{purchaseData.amountUsd} USD</p>
+                      <p className="font-mono text-lg text-white">{purchaseData.amountUsd} USDT</p>
                     </div>
 
                     <Button
@@ -345,6 +438,78 @@ export default function MembershipPage() {
                     >
                       {isWriting ? 'Confirm in wallet...' : isConfirming ? 'Confirming...' : verifying ? 'Verifying...' : isConnected ? `Pay ${purchaseData.amountUsd} USDT` : 'Connect Wallet & Pay'}
                     </Button>
+
+                    {/* {!isConnected && (
+                      <Button
+                        onClick={handlePayDirect}
+                        disabled={isPaying}
+                        variant="outline"
+                        size="lg"
+                        className="w-full rounded-full mt-3"
+                      >
+                        {isPaying ? 'Processing...' : 'Pay with MetaMask'}
+                      </Button>
+                    )} */}
+
+                    {isConnected && address && (
+                      <div className="mt-4 flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-800/50 border border-slate-700">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] flex items-center justify-center flex-shrink-0">
+                            <Wallet className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs text-slate-400">Connected Wallet</p>
+                            <p className="font-mono text-sm text-white truncate">
+                              {address.slice(0, 6)}...{address.slice(-4)}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => disconnect()}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium hover:bg-red-500/20 transition-colors flex-shrink-0"
+                        >
+                          <LogOut className="w-3.5 h-3.5" />
+                          Disconnect
+                        </button>
+                      </div>
+                    )}
+
+                    {/* <div className="mt-6 pt-6 border-t border-slate-700/50">
+                      <p className="text-slate-400 text-sm mb-4">Or send manually from your wallet, then verify below:</p>
+                      <form onSubmit={handleVerifyManual} className="space-y-4">
+                        <div>
+                          <label className="block text-slate-400 text-sm mb-2">Transaction Hash</label>
+                          <input
+                            type="text"
+                            value={txHashManual}
+                            onChange={(e) => setTxHashManual(e.target.value)}
+                            placeholder="0x..."
+                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-slate-400 text-sm mb-2">Your BSC Wallet Address (sender)</label>
+                          <input
+                            type="text"
+                            value={senderAddressManual}
+                            onChange={(e) => setSenderAddressManual(e.target.value)}
+                            placeholder="0x..."
+                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                            required
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          disabled={verifying || !txHashManual || !senderAddressManual}
+                          variant="outline"
+                          size="lg"
+                          className="w-full rounded-full"
+                        >
+                          {verifying ? 'Verifying...' : 'Verify Manual Deposit'}
+                        </Button>
+                      </form>
+                    </div> */}
                   </div>
                 </div>
               </Card>
@@ -381,24 +546,61 @@ export default function MembershipPage() {
                 <div className="divide-y divide-slate-700/50">
                   {history.map((item, index) => (
                     <div key={index} className="p-4 hover:bg-slate-800/30 transition-colors">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
                             <Crown className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="font-medium text-white">{item.amountUsd} USD Membership</p>
+                            <p className="font-medium text-white">{item.amountUsd} USDT Membership</p>
                             <p className="text-slate-400 text-sm">{new Date(item.createdAt).toLocaleDateString()}</p>
                           </div>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          item.status === 'COMPLETED' 
-                            ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                          item.status === 'COMPLETED'
+                            ? 'bg-green-500/10 text-green-400 border border-green-500/20'
                             : 'bg-slate-700/50 text-slate-400 border border-slate-600/50'
                         }`}>
                           {item.status}
                         </div>
                       </div>
+
+                      {item.payment?.transactionHash && (
+                        <div className="mt-2 ml-13 space-y-1">
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-slate-500">Tx Hash:</span>
+                            <span className="text-slate-300 font-mono break-all">{item.payment.transactionHash.substring(0, 20)}...{item.payment.transactionHash.substring(item.payment.transactionHash.length - 8)}</span>
+                            <button
+                              onClick={() => handleCopy(item.payment.transactionHash, `tx-${index}`)}
+                              className="text-[#EBD197] hover:text-[#BB9B49] flex items-center gap-1 flex-shrink-0"
+                            >
+                              {copied === `tx-${index}` ? <><Check className="w-3 h-3" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
+                            </button>
+                          </div>
+                          {item.payment?.senderAddress && (
+                            <div className="flex items-center gap-2 text-xs">
+                              <span className="text-slate-500">From:</span>
+                              <span className="text-slate-300 font-mono">{item.payment.senderAddress.substring(0, 10)}...{item.payment.senderAddress.substring(item.payment.senderAddress.length - 6)}</span>
+                              <button
+                                onClick={() => handleCopy(item.payment.senderAddress, `addr-${index}`)}
+                                className="text-[#EBD197] hover:text-[#BB9B49] flex items-center gap-1 flex-shrink-0"
+                              >
+                                {copied === `addr-${index}` ? <><Check className="w-3 h-3" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
+                              </button>
+                            </div>
+                          )}
+                          {item.payment?.transactionHash && (
+                            <a
+                              href={`https://testnet.bscscan.com/tx/${item.payment.transactionHash}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-xs text-[#EBD197] hover:text-[#BB9B49] mt-1"
+                            >
+                              <CreditCard className="w-3 h-3" /> View on BscScan
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -407,6 +609,28 @@ export default function MembershipPage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Membership Purchase Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShowSuccessModal(false)}>
+          <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl max-w-md w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-10 h-10 text-emerald-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Membership Purchased Successfully!</h3>
+              <p className="text-slate-400 text-sm mb-6">
+                Your membership has been activated. You now have access to mining, MLM rewards, and all platform features.
+              </p>
+              <div className="flex justify-center">
+                <Button onClick={() => setShowSuccessModal(false)} variant="primary" className="rounded-full">
+                  <CheckCircle className="w-4 h-4 mr-2" /> Done
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
