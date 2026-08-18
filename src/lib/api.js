@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { setAuthTokensWithoutEvent, clearAuthTokensWithoutEvent } from './utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+//const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.epochera.io/api/v1';
 
 // Helper function to set auth tokens and dispatch event
 const setAuthTokensWithEvent = (accessToken, refreshToken) => {
