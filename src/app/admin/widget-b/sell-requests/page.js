@@ -92,7 +92,7 @@ export default function AdminSellRequestsPage() {
       return
     }
     if (r.usdtNetwork !== 'BSC') {
-      setError('Auto pay is only available for BSC network. Use manual for TRC20.')
+      setError('Auto pay is only available for BSC network. Use manual for BEP20.')
       setPayingId(null)
       return
     }

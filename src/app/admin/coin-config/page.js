@@ -19,7 +19,7 @@ export default function AdminCoinConfigPage() {
     coinsPerUsd: '',
     directSponsorRewardPercent: '',
     sellPercent: '',
-    allowedUsdtNetwork: 'TRC20',
+    allowedUsdtNetwork: 'BEP20',
   })
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function AdminCoinConfigPage() {
           coinsPerUsd: cfg.coinsPerUsd?.toString() || '',
           directSponsorRewardPercent: cfg.directSponsorRewardPercent?.toString() || '',
           sellPercent: cfg.sellPercent?.toString() || '',
-          allowedUsdtNetwork: cfg.allowedUsdtNetwork || 'TRC20',
+          allowedUsdtNetwork: cfg.allowedUsdtNetwork || 'BEP20',
         })
       }
     } catch (err) {
@@ -229,7 +229,7 @@ export default function AdminCoinConfigPage() {
                 onChange={(e) => setForm({ ...form, allowedUsdtNetwork: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white focus:border-[#B48811]/50 focus:ring-1 focus:ring-[#B48811]/50 focus:outline-none transition-all"
               >
-                <option value="TRC20">TRC20 (Tron)</option>
+                <option value="BEP20">BEP20 (Tron)</option>
                 <option value="BSC">BSC (Binance Smart Chain)</option>
                 <option value="ERC20">ERC20 (Ethereum)</option>
               </select>

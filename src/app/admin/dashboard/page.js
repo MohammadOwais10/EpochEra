@@ -392,7 +392,7 @@ export default function AdminDashboard() {
           <StatCard
             icon={<ScrollText className="w-6 h-6" />}
             label="Allowed Network"
-            value={stats?.coinConfig?.allowedUsdtNetwork || 'TRC20'}
+            value={'BEP20'}
           />
         </div>
       </motion.div>

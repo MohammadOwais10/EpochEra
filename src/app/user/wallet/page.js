@@ -12,6 +12,8 @@ export default function WalletPage() {
   const router = useRouter()
   const [wallets, setWallets] = useState({ usd: null, widgetA: null, widgetB: null })
   const [transactions, setTransactions] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 15
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [actionError, setActionError] = useState('')
@@ -57,6 +59,10 @@ export default function WalletPage() {
   useEffect(() => {
     loadData()
   }, [loadData])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [transactions])
 
   const handleTransfer = async (e) => {
     e.preventDefault()
@@ -107,14 +113,32 @@ export default function WalletPage() {
     }
   }
 
-  const formatCurrency = (value) => {
-    if (value === null || value === undefined) return '$0.00'
+  const formatNumber = (value) => {
+    if (value === null || value === undefined) return '0.00'
     return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value)
+  }
+
+  const formatCurrency = (value) => {
+    if (value === null || value === undefined) return '$0.00'
+    return `$${formatNumber(value)}`
+  }
+
+  const formatCoin = (value) => {
+    if (value === null || value === undefined) return 'Epoch 0.00'
+    return `Epoch ${formatNumber(value)}`
+  }
+
+  const totalPages = Math.max(1, Math.ceil(transactions.length / itemsPerPage))
+  const paginatedTransactions = transactions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page)
   }
 
   if (loading) {
@@ -254,8 +278,8 @@ export default function WalletPage() {
                   </div>
                 </div>
                 <p className="text-slate-400 text-sm font-medium mb-1">Widget A</p>
-                <p className="text-3xl font-bold text-white tracking-tight">{formatCurrency(wallets.widgetA?.available)}</p>
-                <p className="text-slate-500 text-xs mt-2">Total: {formatCurrency(wallets.widgetA?.total)}</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{formatCoin(wallets.widgetA?.available)}</p>
+                <p className="text-slate-500 text-xs mt-2">Total: {formatCoin(wallets.widgetA?.total)}</p>
               </div>
             </motion.div>
 
@@ -280,8 +304,8 @@ export default function WalletPage() {
                   </div>
                 </div>
                 <p className="text-slate-400 text-sm font-medium mb-1">Widget B</p>
-                <p className="text-3xl font-bold text-white tracking-tight">{formatCurrency(wallets.widgetB?.available)}</p>
-                <p className="text-slate-500 text-xs mt-2">Total: {formatCurrency(wallets.widgetB?.total)}</p>
+                <p className="text-3xl font-bold text-white tracking-tight">{formatCoin(wallets.widgetB?.available)}</p>
+                <p className="text-slate-500 text-xs mt-2">Total: {formatCoin(wallets.widgetB?.total)}</p>
               </div>
             </motion.div>
           </motion.div>
@@ -385,7 +409,7 @@ export default function WalletPage() {
                         required
                       >
                         <option value="BSC">BSC</option>
-                        <option value="TRC20">TRC20</option>
+                        <option value="BEP20">BEP20</option>
                       </select>
                     </div>
                     <div>
@@ -394,7 +418,7 @@ export default function WalletPage() {
                         type="text"
                         value={withdrawAddress}
                         onChange={(e) => setWithdrawAddress(e.target.value)}
-                        placeholder={withdrawNetwork === 'TRC20' ? 'T...' : '0x...'}
+                        placeholder={withdrawNetwork === 'BEP20' ? 'T...' : '0x...'}
                         className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
                         required
                       />
@@ -456,7 +480,7 @@ export default function WalletPage() {
                         </td>
                       </tr>
                     ) : (
-                      transactions.map((tx, i) => (
+                      paginatedTransactions.map((tx, i) => (
                         <tr key={i} className="border-t border-slate-700/50 hover:bg-slate-800/30 transition-colors">
                           <td className="p-4">
                             <div className="flex items-center gap-2">
@@ -475,7 +499,7 @@ export default function WalletPage() {
                               {tx.transactionType}
                             </span>
                           </td>
-                          <td className="p-4 font-semibold text-white">{formatCurrency(tx.amount)}</td>
+                          <td className="p-4 font-semibold text-white">{tx.walletType?.toUpperCase() === 'USD' ? formatCurrency(tx.amount) : formatCoin(tx.amount)}</td>
                           <td className="p-4 text-slate-400">
                             {tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : '-'}
                           </td>
@@ -485,6 +509,37 @@ export default function WalletPage() {
                   </tbody>
                 </table>
               </div>
+
+              {transactions.length > itemsPerPage && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-slate-700/50 bg-slate-800/30">
+                  <p className="text-slate-400 text-sm">
+                    Showing <span className="text-white font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> - <span className="text-white font-medium">{Math.min(currentPage * itemsPerPage, transactions.length)}</span> of <span className="text-white font-medium">{transactions.length}</span> transactions
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-slate-300 text-sm font-medium px-2 min-w-[4rem] text-center">
+                      {currentPage} / {totalPages}
+                    </span>
+                    <Button
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
             </Card>
           </motion.div>
         </div>

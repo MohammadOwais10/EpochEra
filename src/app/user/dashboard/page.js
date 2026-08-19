@@ -146,7 +146,7 @@ export default function UserDashboard() {
   }, [router])
 
   const handleCopy = async () => {
-    if (!user?.referralCode) return
+    if (!user?.referralCode || !isMembershipActive) return
     try {
       await navigator.clipboard.writeText(`${window.location.origin}/signup?sponsor=${user.referralCode}`)
       setCopied(true)
@@ -157,14 +157,18 @@ export default function UserDashboard() {
   }
 
   const formatNumber = (num) => {
-    if (num === null || num === undefined) return '0'
+    if (num === null || num === undefined) return '0.00'
     const number = parseFloat(num)
-    if (isNaN(number)) return '0'
+    if (isNaN(number)) return '0.00'
     return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
 
   const formatCurrency = (amount) => {
     return `$${formatNumber(amount)}`
+  }
+
+  const formatCoin = (amount) => {
+    return `Epoch ${formatNumber(amount)}`
   }
 
   if (loading) {
@@ -212,7 +216,8 @@ export default function UserDashboard() {
     )
   }
 
-  const referralUrl = typeof window !== 'undefined' && user?.referralCode ? `${window.location.origin}/signup?sponsor=${user.referralCode}` : ''
+  const isMembershipActive = !!stats?.membership?.active
+  const referralUrl = isMembershipActive && typeof window !== 'undefined' && user?.referralCode ? `${window.location.origin}/signup?sponsor=${user.referralCode}` : ''
 
   return (
     <div className="min-h-screen bg-background text-white">
@@ -238,7 +243,7 @@ export default function UserDashboard() {
                
                 <div className="flex-1">
                 
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
                     <p className="text-slate-400 text-sm">Welcome, {user?.firstName || 'User'}</p>
                     <div className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 border ${
                       user?.emailVerified 
@@ -422,9 +427,9 @@ export default function UserDashboard() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#B48811]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 
                 <div className="relative">
-                  <div className="flex items-start justify-between mb-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                      <div className="w-14 h-14 shrink-0 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
                         <Gift className="w-7 h-7 text-white" />
                       </div>
                       <div>
@@ -433,35 +438,42 @@ export default function UserDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[#EBD197] rounded-full animate-pulse"></div>
-                      <span className="text-[#EBD197] text-sm font-medium">Active</span>
+                      <div className={`w-2 h-2 rounded-full ${isMembershipActive ? 'bg-[#EBD197] animate-pulse' : 'bg-red-400'}`}></div>
+                      <span className={`text-sm font-medium ${isMembershipActive ? 'text-[#EBD197]' : 'text-red-400'}`}>
+                        {isMembershipActive ? 'Active' : 'Locked'}
+                      </span>
                     </div>
                   </div>
                   
                   <p className="text-slate-300 text-base mb-6 leading-relaxed">
-                    Share your unique link with friends and earn commission on their purchases. 
-                    The more you share, the more you earn!
+                    {isMembershipActive
+                      ? 'Share your unique link with friends and earn commission on their purchases. The more you share, the more you earn!'
+                      : 'Activate your membership to unlock your referral link and start earning commissions from your network.'}
                   </p>
                   
                   <div className="relative mb-6">
-                    <div className="flex items-center gap-3 bg-slate-950/60 border border-slate-700/50 rounded-2xl p-4 focus-within:border-[#B48811]/50 focus-within:ring-2 focus-within:ring-[#B48811]/20 transition-all duration-300">
-                      <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-950/60 border border-slate-700/50 rounded-2xl p-4 focus-within:border-[#B48811]/50 focus-within:ring-2 focus-within:ring-[#B48811]/20 transition-all duration-300">
+                      <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center shrink-0 hidden sm:flex">
                         <Link className="w-5 h-5 text-slate-400" />
                       </div>
                       <input
                         readOnly
                         value={referralUrl}
-                        className="bg-transparent flex-1 text-sm font-mono text-slate-300 outline-none"
+                        placeholder={isMembershipActive ? '' : 'Activate membership to unlock link'}
+                        disabled={!isMembershipActive}
+                        className="bg-transparent w-full text-sm font-mono text-slate-300 outline-none disabled:text-slate-500 min-w-0"
                       />
                       <motion.div 
-                        whileHover={{ scale: 1.05 }} 
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={isMembershipActive ? { scale: 1.05 } : {}} 
+                        whileTap={isMembershipActive ? { scale: 0.95 } : {}}
+                        className="w-full sm:w-auto"
                       >
                         <Button 
                           onClick={handleCopy} 
                           variant="primary" 
                           size="md" 
-                          className="rounded-xl flex items-center gap-2 px-6 shadow-black/10"
+                          disabled={!isMembershipActive}
+                          className="rounded-xl flex items-center justify-center gap-2 px-6 shadow-black/10 w-full sm:w-auto"
                         >
                           <AnimatePresence mode="wait">
                             {copied ? (
@@ -530,8 +542,8 @@ export default function UserDashboard() {
                 <div className="absolute top-0 right-0 w-48 h-48 bg-[#B48811]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 
                 <div className="relative">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10 shrink-0">
                       <Shield className="w-7 h-7 text-white" />
                     </div>
                     <div>
@@ -543,7 +555,7 @@ export default function UserDashboard() {
                   <div className="space-y-3">
                     <motion.div 
                       whileHover={{ scale: 1.01 }}
-                      className="flex items-center justify-between p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center">
@@ -559,7 +571,7 @@ export default function UserDashboard() {
 
                     <motion.div 
                       whileHover={{ scale: 1.01 }}
-                      className="flex items-center justify-between p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center">
@@ -581,7 +593,7 @@ export default function UserDashboard() {
 
                     <motion.div 
                       whileHover={{ scale: 1.01 }}
-                      className="flex items-center justify-between p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-950/40 rounded-2xl border border-slate-700/30 hover:border-[#B48811]/30 transition-all"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center">
@@ -644,7 +656,7 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><CircleDollarSign className="w-7 h-7 text-white" /></div>}
+                  icon={<CircleDollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="USDT Commission"
                   value={formatCurrency(stats?.wallets?.usdCommission)}
                   className="hover:border-[#B48811]/40"
@@ -658,9 +670,9 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Box className="w-7 h-7 text-white" /></div>}
+                  icon={<Box className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="Widget A"
-                  value={formatNumber(stats?.wallets?.widgetA,"coin")}
+                  value={formatCoin(stats?.wallets?.widgetA)}
                   className="hover:border-[#B48811]/40"
                 />
               </motion.div>
@@ -672,9 +684,9 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Coins className="w-7 h-7 text-white" /></div>}
+                  icon={<Coins className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="Widget B"
-                  value={formatNumber(stats?.wallets?.widgetB)}
+                  value={formatCoin(stats?.wallets?.widgetB)}
                   className="hover:border-[#B48811]/40"
                 />
               </motion.div>
@@ -711,7 +723,7 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Users className="w-7 h-7 text-white" /></div>}
+                  icon={<Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="Direct Referrals"
                   value={stats?.mlm?.directReferrals ?? '0'}
                   className="hover:border-[#B48811]/40"
@@ -725,7 +737,7 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Network className="w-7 h-7 text-white" /></div>}
+                  icon={<Network className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="Team Count"
                   value={stats?.mlm?.teamCount ?? '0'}
                   className="hover:border-[#B48811]/40"
@@ -739,7 +751,7 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Pickaxe className="w-7 h-7 text-white" /></div>}
+                  icon={<Pickaxe className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="Mining"
                   value={stats?.mining?.canMine ? 'Ready' : 'Cooldown'}
                   className="hover:border-[#B48811]/40"
@@ -753,7 +765,7 @@ export default function UserDashboard() {
                 whileTap={{ scale: 0.98 }}
               >
                 <StatCard
-                  icon={<div className="w-14 h-14 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10"><Crown className="w-7 h-7 text-white" /></div>}
+                  icon={<Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   label="Membership"
                   value={stats?.membership?.active ? 'Active' : 'Inactive'}
                   className="hover:border-[#B48811]/40"
@@ -798,7 +810,7 @@ export default function UserDashboard() {
                     </div>
                     <div className="flex-1">
                       <p className="text-slate-400 text-sm mb-1">Coins per USDT</p>
-                      <p className="text-3xl font-bold text-white">{formatNumber(stats?.widgetB?.coinsPerUsd)}</p>
+                      <p className="text-3xl font-bold text-white">{formatCoin(stats?.widgetB?.coinsPerUsd)}</p>
                       <div className="flex items-center gap-1 mt-3 text-[#EBD197] text-sm font-medium">
                         <ArrowUpRight className="w-4 h-4" />
                         <span>Live Rate</span>

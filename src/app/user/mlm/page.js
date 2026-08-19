@@ -84,6 +84,16 @@ export default function MlmPage() {
 
   const rootNode = tree.find((n) => n.depth === 0)
 
+  const formatNumber = (num) => {
+    if (num === null || num === undefined) return '0.00'
+    const number = parseFloat(num)
+    if (isNaN(number)) return '0.00'
+    return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+
+  const formatCurrency = (amount) => `$${formatNumber(amount)}`
+  const formatCoin = (amount) => `Epoch ${formatNumber(amount)}`
+
   if (loading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-white flex items-center justify-center p-4">
@@ -238,7 +248,7 @@ export default function MlmPage() {
                   </div>
                 </div>
                 <p className="text-slate-400 text-xs sm:text-sm font-medium mb-1">USDT Earnings</p>
-                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{stats?.totalUsdEarnings ?? '0'}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{formatCurrency(stats?.totalUsdEarnings)}</p>
                 <p className="text-slate-500 text-xs mt-1 sm:mt-2">From your network</p>
               </div>
             </motion.div>
@@ -263,7 +273,7 @@ export default function MlmPage() {
                   </div>
                 </div>
                 <p className="text-slate-400 text-xs sm:text-sm font-medium mb-1">Epoch Coin Earnings</p>
-                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{stats?.totalWidgetAEarnings ?? '0'}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{formatCoin(stats?.totalWidgetAEarnings)}</p>
                 <p className="text-slate-500 text-xs mt-1 sm:mt-2">From your network</p>
               </div>
             </motion.div>
@@ -288,7 +298,7 @@ export default function MlmPage() {
                   </div>
                 </div>
                 <p className="text-slate-400 text-xs sm:text-sm font-medium mb-1">Referral Coin Earnings</p>
-                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{stats?.totalWidgetBEarnings ?? '0'}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{formatCoin(stats?.totalWidgetBEarnings)}</p>
                 <p className="text-slate-500 text-xs mt-1 sm:mt-2">From direct referrals</p>
               </div>
             </motion.div>

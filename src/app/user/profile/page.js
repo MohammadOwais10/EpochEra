@@ -81,6 +81,7 @@ export default function UserProfile() {
   }, [router])
 
   const handleCopy = async (text) => {
+    if (!isMembershipActive) return
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
@@ -144,7 +145,8 @@ export default function UserProfile() {
     )
   }
 
-  const referralUrl = typeof window !== 'undefined' && user?.referralCode 
+  const isMembershipActive = !!stats?.membership?.active
+  const referralUrl = isMembershipActive && typeof window !== 'undefined' && user?.referralCode 
     ? `${window.location.origin}/signup?sponsor=${user.referralCode}` 
     : ''
 
@@ -328,15 +330,16 @@ export default function UserProfile() {
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-slate-300 mb-2">Your Referral Code</label>
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                    <div className="flex-1 px-3 sm:px-4 py-3 rounded-xl bg-slate-800/30 border border-slate-700/50 text-white font-mono text-sm sm:text-base">
-                      {user?.referralCode || 'Not available'}
+                    <div className={`flex-1 px-3 sm:px-4 py-3 rounded-xl bg-slate-800/30 border border-slate-700/50 font-mono text-sm sm:text-base ${isMembershipActive ? 'text-white' : 'text-slate-500'}`}>
+                      {isMembershipActive ? (user?.referralCode || 'Not available') : 'Activate membership to unlock'}
                     </div>
                     {user?.referralCode && (
                       <Button
                         onClick={() => handleCopy(user.referralCode)}
                         variant="outline"
                         size="sm"
-                        className="flex items-center gap-1 min-h-[44px] px-4"
+                        disabled={!isMembershipActive}
+                        className="flex items-center gap-1 min-h-[44px] px-4 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {copied ? (
                           <>
@@ -385,7 +388,9 @@ export default function UserProfile() {
 
                 <div className="p-3 sm:p-4 rounded-xl bg-linear-to-r from-[#B48811]/10 to-[#BB9B49]/10 border border-[#B48811]/20">
                   <p className="text-slate-300 text-xs sm:text-sm">
-                    Share your referral code or link with friends and earn rewards when they sign up and make purchases.
+                    {isMembershipActive
+                      ? 'Share your referral code or link with friends and earn rewards when they sign up and make purchases.'
+                      : 'Activate your membership to unlock your referral code and link, then share with friends to earn rewards.'}
                   </p>
                 </div>
               </div>
