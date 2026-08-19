@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Layers, Wallet, Users, Pickaxe, Coins, CreditCard, Repeat, MessageCircle, LogOut } from 'lucide-react'
+import { Layers, Wallet, Users, Pickaxe, Coins, CreditCard, Repeat, MessageCircle, User, LogOut } from 'lucide-react'
 import { clearAuthTokens } from '@/lib/utils'
 
 const menuItems = [
@@ -14,6 +14,7 @@ const menuItems = [
   { icon: CreditCard, label: 'Widget A', path: '/user/widget-a' },
   { icon: Repeat, label: 'Widget B', path: '/user/widget-b' },
   { icon: MessageCircle, label: 'Support', path: '/user/tickets' },
+  { icon: User, label: 'Profile', path: '/user/profile' },
 ]
 
 export function UserSidebar() {
