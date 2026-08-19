@@ -1,17 +1,53 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { getMySponsor, getMyDirectReferrals, getMlmStatistics } from '@/lib/api'
+import { getMySponsor, getMyDirectReferrals, getMlmStatistics, getMlmTree } from '@/lib/api'
 import { Users, UserPlus, DollarSign, Coins, Mail, User, Building2, TrendingUp, X } from 'lucide-react'
 import Card from '@/components/ui/Card'
+
+function TreeNode({ node, childrenMap, level = 0 }) {
+  const children = childrenMap.get(node.id) || []
+  const isRoot = level === 0
+
+  return (
+    <div className="flex flex-col items-center min-w-[120px] px-3">
+      <div className="flex flex-col items-center mb-1">
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-black/10 ${isRoot ? 'bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49]' : 'bg-slate-700/50'}`}>
+          <User className={`w-6 h-6 ${isRoot ? 'text-white' : 'text-slate-400'}`} />
+        </div>
+        <p className="text-white text-xs font-medium mt-1 text-center truncate max-w-[140px]">
+          {node.firstName || node.username || node.email}
+        </p>
+        <p className="text-slate-400 text-[10px] text-center">
+          {node.depth > 0 ? `Level ${node.depth}` : '(You)'}
+        </p>
+      </div>
+      {children.length > 0 && (
+        <div className="flex flex-col items-center w-full">
+          <div className="w-[2px] h-5 bg-[#B48811]" />
+          <div className="w-full h-[2px] bg-[#B48811]" />
+          <div className="flex items-start justify-center w-full">
+            {children.map((child) => (
+              <div key={child.id} className="flex flex-col items-center px-3">
+                <div className="w-[2px] h-5 bg-[#B48811]" />
+                <TreeNode node={child} childrenMap={childrenMap} level={level + 1} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function MlmPage() {
   const router = useRouter()
   const [sponsor, setSponsor] = useState(null)
   const [direct, setDirect] = useState([])
   const [stats, setStats] = useState(null)
+  const [tree, setTree] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -23,10 +59,11 @@ export default function MlmPage() {
     }
     const fetchData = async () => {
       try {
-        const [s, d, st] = await Promise.all([getMySponsor(), getMyDirectReferrals(), getMlmStatistics()])
+        const [s, d, st, t] = await Promise.all([getMySponsor(), getMyDirectReferrals(), getMlmStatistics(), getMlmTree()])
         setSponsor(s.success ? s.data : null)
         setDirect(d.success ? (d.data?.data || d.data || []) : [])
         setStats(st.success ? st.data : null)
+        setTree(t.success ? (t.data?.data || t.data || []) : [])
       } catch (err) {
         setError(err.response?.data?.error?.message || err.message || 'Failed to load MLM data')
       } finally {
@@ -35,6 +72,17 @@ export default function MlmPage() {
     }
     fetchData()
   }, [router])
+
+  const childrenMap = useMemo(() => {
+    const map = new Map()
+    tree.forEach((node) => {
+      if (!map.has(node.sponsorId)) map.set(node.sponsorId, [])
+      map.get(node.sponsorId).push(node)
+    })
+    return map
+  }, [tree])
+
+  const rootNode = tree.find((n) => n.depth === 0)
 
   if (loading) {
     return (
@@ -338,6 +386,42 @@ export default function MlmPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </Card>
+          </motion.div>
+
+          {/* Referral Tree */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.55 }}
+            className="mb-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.65 }}
+              className="flex items-center gap-4 mb-6"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-[#EBD197] via-[#B48811] to-[#BB9B49] border border-[#B48811]/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-black/10">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">Referral Tree</h2>
+                <p className="text-slate-400 text-sm">Your multi-level referral network</p>
+              </div>
+            </motion.div>
+
+            <Card className="overflow-x-auto p-5">
+              {!rootNode ? (
+                <div className="p-8 text-center">
+                  <Users className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-500">No referral tree data found</p>
+                </div>
+              ) : (
+                <div className="min-w-max flex justify-center">
+                  <TreeNode node={rootNode} childrenMap={childrenMap} />
                 </div>
               )}
             </Card>

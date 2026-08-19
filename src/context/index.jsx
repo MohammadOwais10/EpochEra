@@ -18,7 +18,7 @@ if (!projectId) {
 const metadata = {
   name: 'EpochEra',
   description: 'EpochEra - Decentralized Prediction Protocol',
-  url: 'http://localhost:5001',
+  url: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5001',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 

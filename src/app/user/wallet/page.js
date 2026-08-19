@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { getUsdWallet, getWalletWidgetA, getWalletWidgetB, getWalletTransactions } from '@/lib/api'
-import { Wallet, Coins, DollarSign, ArrowUp, ArrowDown, History, CircleDollarSign, Box } from 'lucide-react'
+import { getUsdWallet, getWalletWidgetA, getWalletWidgetB, getWalletTransactions, transferUsdCommission, withdrawUsdCommission } from '@/lib/api'
+import { Wallet, Coins, DollarSign, ArrowUp, ArrowDown, History, CircleDollarSign, Box, Send, Download } from 'lucide-react'
 import Card from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
 
 export default function WalletPage() {
   const router = useRouter()
@@ -13,35 +14,98 @@ export default function WalletPage() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [actionError, setActionError] = useState('')
+  const [actionMsg, setActionMsg] = useState('')
 
-  useEffect(() => {
+  const [activeAction, setActiveAction] = useState(null)
+  const [transferTo, setTransferTo] = useState('')
+  const [transferAmount, setTransferAmount] = useState('')
+  const [transferDesc, setTransferDesc] = useState('')
+  const [withdrawAmount, setWithdrawAmount] = useState('')
+  const [withdrawNetwork, setWithdrawNetwork] = useState('BSC')
+  const [withdrawAddress, setWithdrawAddress] = useState('')
+  const [actionLoading, setActionLoading] = useState(false)
+
+  const loadData = useCallback(async () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
     if (!token) {
       router.push('/signin')
       return
     }
-    const fetchData = async () => {
-      try {
-        const [usd, a, b, tx] = await Promise.all([
-          getUsdWallet(),
-          getWalletWidgetA(),
-          getWalletWidgetB(),
-          getWalletTransactions(),
-        ])
-        setWallets({
-          usd: usd.success ? usd.data : null,
-          widgetA: a.success ? a.data : null,
-          widgetB: b.success ? b.data : null,
-        })
-        setTransactions(tx.success ? (tx.data?.data || tx.data || []) : [])
-      } catch (err) {
-        setError(err.response?.data?.error?.message || err.message || 'Failed to load wallet')
-      } finally {
-        setLoading(false)
-      }
+    setLoading(true)
+    setError('')
+    try {
+      const [usd, a, b, tx] = await Promise.all([
+        getUsdWallet(),
+        getWalletWidgetA(),
+        getWalletWidgetB(),
+        getWalletTransactions(),
+      ])
+      setWallets({
+        usd: usd.success ? usd.data : null,
+        widgetA: a.success ? a.data : null,
+        widgetB: b.success ? b.data : null,
+      })
+      setTransactions(tx.success ? (tx.data?.data || tx.data || []) : [])
+    } catch (err) {
+      setError(err.response?.data?.error?.message || err.message || 'Failed to load wallet')
+    } finally {
+      setLoading(false)
     }
-    fetchData()
   }, [router])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  const handleTransfer = async (e) => {
+    e.preventDefault()
+    setActionLoading(true)
+    setActionError('')
+    setActionMsg('')
+    try {
+      const result = await transferUsdCommission({
+        to: transferTo,
+        amount: transferAmount,
+        description: transferDesc,
+      })
+      if (!result.success) throw new Error(result.error?.message || 'Transfer failed')
+      setActionMsg(`Transferred ${transferAmount} USDT commission to user`)
+      setTransferTo('')
+      setTransferAmount('')
+      setTransferDesc('')
+      setActiveAction(null)
+      await loadData()
+    } catch (err) {
+      setActionError(err.response?.data?.error?.message || err.message || 'Transfer failed')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleWithdraw = async (e) => {
+    e.preventDefault()
+    setActionLoading(true)
+    setActionError('')
+    setActionMsg('')
+    try {
+      const result = await withdrawUsdCommission({
+        amount: withdrawAmount,
+        usdtNetwork: withdrawNetwork,
+        usdtWalletAddress: withdrawAddress,
+      })
+      if (!result.success) throw new Error(result.error?.message || 'Withdrawal request failed')
+      setActionMsg('Withdrawal request submitted. Admin will process it soon.')
+      setWithdrawAmount('')
+      setWithdrawAddress('')
+      setActiveAction(null)
+      await loadData()
+    } catch (err) {
+      setActionError(err.response?.data?.error?.message || err.message || 'Withdrawal request failed')
+    } finally {
+      setActionLoading(false)
+    }
+  }
 
   const formatCurrency = (value) => {
     if (value === null || value === undefined) return '$0.00'
@@ -148,6 +212,24 @@ export default function WalletPage() {
                 <p className="text-slate-400 text-sm font-medium mb-1">USDT Wallet</p>
                 <p className="text-3xl font-bold text-white tracking-tight">{formatCurrency(wallets.usd?.available)}</p>
                 <p className="text-slate-500 text-xs mt-2">Total: {formatCurrency(wallets.usd?.total)}</p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Button
+                    onClick={() => setActiveAction('withdraw')}
+                    variant="primary"
+                    size="sm"
+                    className="rounded-full text-xs"
+                  >
+                    <Download className="w-3.5 h-3.5 mr-1" /> Withdraw
+                  </Button>
+                  <Button
+                    onClick={() => setActiveAction('transfer')}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full text-xs"
+                  >
+                    <Send className="w-3.5 h-3.5 mr-1" /> P2P Transfer
+                  </Button>
+                </div>
               </div>
             </motion.div>
 
@@ -203,6 +285,133 @@ export default function WalletPage() {
               </div>
             </motion.div>
           </motion.div>
+
+          {/* USD Commission Actions */}
+          {activeAction && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="mb-8"
+            >
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-white">
+                    {activeAction === 'withdraw' ? 'Withdraw USD Commission' : 'P2P Transfer'}
+                  </h2>
+                  <button
+                    onClick={() => setActiveAction(null)}
+                    className="text-slate-400 hover:text-white"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                {actionMsg && (
+                  <div className="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    {actionMsg}
+                  </div>
+                )}
+                {actionError && (
+                  <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {actionError}
+                  </div>
+                )}
+
+                {activeAction === 'transfer' ? (
+                  <form onSubmit={handleTransfer} className="space-y-4">
+                    <div>
+                      <label className="block text-slate-400 text-sm mb-2">Recipient (Username / Email / Referral )</label>
+                      <input
+                        type="text"
+                        value={transferTo}
+                        onChange={(e) => setTransferTo(e.target.value)}
+                        placeholder="e.g. john_doe or email@example.com"
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 text-sm mb-2">Amount (USDT)</label>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={transferAmount}
+                        onChange={(e) => setTransferAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 text-sm mb-2">Description (optional)</label>
+                      <input
+                        type="text"
+                        value={transferDesc}
+                        onChange={(e) => setTransferDesc(e.target.value)}
+                        placeholder="Transfer note"
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={actionLoading}
+                      variant="primary"
+                      className="w-full rounded-full"
+                    >
+                      {actionLoading ? 'Processing...' : 'Transfer Now'}
+                    </Button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleWithdraw} className="space-y-4">
+                    <div>
+                      <label className="block text-slate-400 text-sm mb-2">Amount (USDT)</label>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={withdrawAmount}
+                        onChange={(e) => setWithdrawAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 text-sm mb-2">Network</label>
+                      <select
+                        value={withdrawNetwork}
+                        onChange={(e) => setWithdrawNetwork(e.target.value)}
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                        required
+                      >
+                        <option value="BSC">BSC</option>
+                        <option value="TRC20">TRC20</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 text-sm mb-2">USDT Wallet Address</label>
+                      <input
+                        type="text"
+                        value={withdrawAddress}
+                        onChange={(e) => setWithdrawAddress(e.target.value)}
+                        placeholder={withdrawNetwork === 'TRC20' ? 'T...' : '0x...'}
+                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
+                        required
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={actionLoading}
+                      variant="primary"
+                      className="w-full rounded-full"
+                    >
+                      {actionLoading ? 'Submitting...' : 'Request Withdrawal'}
+                    </Button>
+                  </form>
+                )}
+              </Card>
+            </motion.div>
+          )}
 
           {/* Professional Transactions Section */}
           <motion.div

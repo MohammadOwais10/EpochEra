@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { listAdminWalletTransactions } from '@/lib/api'
 import Card from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
 import { Wallet, ArrowRightLeft, AlertCircle } from 'lucide-react'
 
 export default function AdminWalletTransactionsPage() {
@@ -12,6 +13,11 @@ export default function AdminWalletTransactionsPage() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20)
+  const [total, setTotal] = useState(0)
+
+  const totalPages = Math.ceil(total / limit) || 1
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
@@ -21,8 +27,9 @@ export default function AdminWalletTransactionsPage() {
     }
     const fetchData = async () => {
       try {
-        const result = await listAdminWalletTransactions()
+        const result = await listAdminWalletTransactions(`page=${page}&limit=${limit}`)
         setTransactions(result.success ? (result.data?.data || result.data || []) : [])
+        setTotal(result.success ? (result.data?.total || 0) : 0)
       } catch (err) {
         setError(err.response?.data?.error?.message || err.message || 'Failed to load transactions')
       } finally {
@@ -30,7 +37,7 @@ export default function AdminWalletTransactionsPage() {
       }
     }
     fetchData()
-  }, [router])
+  }, [page, limit])
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center text-white">
@@ -76,7 +83,7 @@ export default function AdminWalletTransactionsPage() {
           <p className="text-slate-400 text-sm">View all wallet transactions across the platform</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Total: {transactions.length}</span>
+          <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Total: {total}</span>
         </div>
       </motion.div>
 
@@ -125,6 +132,30 @@ export default function AdminWalletTransactionsPage() {
             </tbody>
           </table>
         </Card>
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex items-center justify-between">
+            <Button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+            >
+              Previous
+            </Button>
+            <span className="text-slate-400 text-sm">Page {page} of {totalPages}</span>
+            <Button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </motion.div>
     </div>
   )

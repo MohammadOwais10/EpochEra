@@ -208,10 +208,10 @@ export default function AdminDashboard() {
                   <p className="text-slate-400 text-xs mb-1">Source</p>
                   <p className="text-lg font-semibold text-white">Level 1-12</p>
                 </div>
-                <div className="p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+                {/* <div className="p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
                   <p className="text-slate-400 text-xs mb-1">Status</p>
                   <p className="text-lg font-semibold text-white">Non-Withdrawable</p>
-                </div>
+                </div> */}
               </div>
             </div>
           </Card>

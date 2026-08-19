@@ -96,15 +96,21 @@ export default function MembershipPage() {
     setTimeout(() => setCopied(''), 2000)
   }
 
-  const handlePurchase = async () => {
+  const handlePurchase = async (provider = 'blockchain') => {
     setPurchasing(true)
     setError('')
     setMsg('')
     try {
-      const result = await purchaseMembership({ paymentProvider: 'blockchain' })
+      const result = await purchaseMembership({ paymentProvider: provider })
       if (!result.success) throw new Error(result.error?.message || 'Purchase failed')
-      setPurchaseData(result.data)
-      setMsg('Purchase initiated. Send the exact amount, or pay with your connected wallet.')
+      if (provider === 'usd_commission') {
+        setMsg('Membership purchased using USD commission.')
+        setShowSuccessModal(true)
+        await fetchData()
+      } else {
+        setPurchaseData(result.data)
+        setMsg('Purchase initiated. Send the exact amount, or pay with your connected wallet.')
+      }
     } catch (err) {
       setError(err.response?.data?.error?.message || err.message || 'Purchase failed')
     } finally {
@@ -366,15 +372,26 @@ export default function MembershipPage() {
                     </div>
                   </div>
                   {!purchaseData && (
-                    <Button
-                      onClick={handlePurchase}
-                      disabled={purchasing}
-                      variant="primary"
-                      size="lg"
-                      className="rounded-full w-full md:w-auto"
-                    >
-                      {purchasing ? 'Processing...' : 'Purchase Standard Membership'}
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button
+                        onClick={() => handlePurchase('blockchain')}
+                        disabled={purchasing}
+                        variant="primary"
+                        size="lg"
+                        className="rounded-full w-full md:w-auto"
+                      >
+                        {purchasing ? 'Processing...' : 'Purchase with Wallet'}
+                      </Button>
+                      <Button
+                        onClick={() => handlePurchase('usd_commission')}
+                        disabled={purchasing}
+                        variant="outline"
+                        size="lg"
+                        className="rounded-full w-full md:w-auto"
+                      >
+                        {purchasing ? 'Processing...' : 'Buy with USD Commission'}
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
@@ -407,6 +424,18 @@ export default function MembershipPage() {
                     <p className="text-slate-400 text-sm mb-2">Payment Details</p>
                     <p className="text-white">
                       Send <strong className="text-[#EBD197]">{purchaseData.amountUsd} USDT</strong> to the deposit wallet on <strong className="text-[#EBD197]">{purchaseData.network?.toUpperCase()}</strong>
+                    </p>
+                  </div>
+
+                  <div className='bg-[#B48811]/10 border border-[#B48811]/20 rounded-xl p-4'>
+                    <p className='text-[#EBD197] font-semibold mb-2'>How to pay</p>
+                    <ol className='text-sm text-slate-300 list-decimal list-inside space-y-1'>
+                      <li>Click <strong className='text-white'>Connect Wallet and Pay</strong> below and choose a wallet (MetaMask, Trust Wallet, WalletConnect, etc).</li>
+                      <li>Make sure your wallet is on <strong className='text-white'>BSC Testnet</strong> and has USDT.</li>
+                      <li>Approve the exact <strong className='text-white'>{purchaseData.amountUsd} USDT</strong> transfer.</li>
+                    </ol>
+                    <p className='text-xs text-slate-400 mt-2'>
+                      Or manually send the exact amount to the address below from any BSC-Testnet wallet that supports BEP-20 USDT.
                     </p>
                   </div>
 

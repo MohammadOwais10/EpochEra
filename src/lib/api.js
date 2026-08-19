@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { setAuthTokensWithoutEvent, clearAuthTokensWithoutEvent } from './utils';
 
-//const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.epochera.io/api/v1';
 
 // Helper function to set auth tokens and dispatch event
@@ -160,6 +160,10 @@ export const getUsdWallet = () => get('/wallet/usd');
 export const getWalletWidgetA = () => get('/wallet/widget-a');
 export const getWalletWidgetB = () => get('/wallet/widget-b');
 export const getWalletTransactions = () => get('/wallet/transactions');
+export const transferUsdCommission = (data) => post('/wallet/usd/transfer', data);
+export const withdrawUsdCommission = (data) => post('/wallet/usd/withdraw', data);
+export const getUsdCommissionTransfers = () => get('/wallet/usd/transfers');
+export const getUsdCommissionWithdrawals = () => get('/wallet/usd/withdrawals');
 
 /* ============================================================
    WIDGET A
@@ -252,6 +256,12 @@ export const approveSellRequest = (id) => patch(`/admin/widget-b/sell-requests/$
 export const rejectSellRequest = (id, data) => patch(`/admin/widget-b/sell-requests/${id}/reject`, data);
 export const processingSellRequest = (id) => patch(`/admin/widget-b/sell-requests/${id}/processing`);
 export const completeSellRequest = (id, data) => patch(`/admin/widget-b/sell-requests/${id}/complete`, data);
+
+// Admin USD commission withdrawals
+export const listAdminUsdWithdrawals = (query = '') => get(`/admin/usd-withdrawals${query ? `?${query}` : ''}`);
+export const getAdminUsdWithdrawal = (id) => get(`/admin/usd-withdrawals/${id}`);
+export const completeAdminUsdWithdrawal = (id, data) => patch(`/admin/usd-withdrawals/${id}/complete`, data);
+export const rejectAdminUsdWithdrawal = (id, data) => patch(`/admin/usd-withdrawals/${id}/reject`, data);
 
 export const createAdminMiningContent = (data) => post('/admin/mining/content', data);
 export const listAdminMiningContent = () => get('/admin/mining/content');
