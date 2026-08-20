@@ -7,6 +7,7 @@ import { getUsdWallet, getWalletWidgetA, getWalletWidgetB, getWalletTransactions
 import { Wallet, Coins, DollarSign, ArrowUp, ArrowDown, History, CircleDollarSign, Box, Send, Download } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import Toast from '@/components/ui/Toast'
 
 export default function WalletPage() {
   const router = useRouter()
@@ -18,6 +19,7 @@ export default function WalletPage() {
   const [error, setError] = useState('')
   const [actionError, setActionError] = useState('')
   const [actionMsg, setActionMsg] = useState('')
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' })
 
   const [activeAction, setActiveAction] = useState(null)
   const [transferTo, setTransferTo] = useState('')
@@ -77,6 +79,7 @@ export default function WalletPage() {
       })
       if (!result.success) throw new Error(result.error?.message || 'Transfer failed')
       setActionMsg(`Transferred ${transferAmount} USDT commission to user`)
+      setToast({ show: true, message: `Transferred ${transferAmount} USDT commission successfully`, type: 'success' })
       setTransferTo('')
       setTransferAmount('')
       setTransferDesc('')
@@ -94,6 +97,11 @@ export default function WalletPage() {
     setActionLoading(true)
     setActionError('')
     setActionMsg('')
+    if (!withdrawAmount || Number(withdrawAmount) < 15) {
+      setActionError('Minimum withdrawal amount is 15 USDT.')
+      setActionLoading(false)
+      return
+    }
     try {
       const result = await withdrawUsdCommission({
         amount: withdrawAmount,
@@ -102,6 +110,7 @@ export default function WalletPage() {
       })
       if (!result.success) throw new Error(result.error?.message || 'Withdrawal request failed')
       setActionMsg('Withdrawal request submitted. Admin will process it soon.')
+      setToast({ show: true, message: 'Withdrawal request submitted successfully', type: 'success' })
       setWithdrawAmount('')
       setWithdrawAddress('')
       setActiveAction(null)
@@ -543,6 +552,7 @@ export default function WalletPage() {
             </Card>
           </motion.div>
         </div>
+        <Toast message={toast.message} type={toast.type} isVisible={toast.show} onClose={() => setToast({ ...toast, show: false })} />
       </div>
     </div>
   )

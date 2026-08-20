@@ -57,6 +57,11 @@ export default function SignUp() {
     setLoading(true)
     setError('')
     setMessage('')
+    if (!form.sponsorReferralCode?.trim()) {
+      setError('Referral code is required to sign up.')
+      setLoading(false)
+      return
+    }
     try {
       const username = generateUsername(form.firstName, form.lastName, form.email)
       const result = await register({ ...form, username })
@@ -187,6 +192,7 @@ export default function SignUp() {
           value={form.sponsorReferralCode}
           onChange={handleChange}
           disabled={!!searchParams.get('sponsor')}
+          required={!searchParams.get('sponsor')}
           className="w-full px-4 py-3.5 rounded-xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-600/50 text-foreground placeholder-slate-400 focus:border-[#B48811] focus:ring-2 focus:ring-[#B48811]/30 focus:shadow-lg focus:shadow-[#B48811]/10 hover:border-slate-500/50 hover:bg-gradient-to-br hover:from-slate-800/60 hover:to-slate-900/60 focus:outline-none transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
           placeholder="Enter referral code"
         />

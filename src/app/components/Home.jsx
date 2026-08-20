@@ -262,7 +262,7 @@ function HomePage() {
                       <th className="px-8 py-6 text-left text-sm font-semibold text-[#EBD197] uppercase tracking-wider">Level</th>
                       <th className="px-8 py-6 text-left text-sm font-semibold text-[#EBD197] uppercase tracking-wider">Direct Target</th>
                       <th className="px-8 py-6 text-left text-sm font-semibold text-[#EBD197] uppercase tracking-wider">Commission (Instant USDT)</th>
-                      <th className="px-8 py-6 text-left text-sm font-semibold text-[#EBD197] uppercase tracking-wider">Token Bonus (EpochEra)</th>
+                      <th className="px-8 py-6 text-left text-sm font-semibold text-[#EBD197] uppercase tracking-wider">Token Bonus (Epoch)</th>
                     </tr>
                   </thead>
                   <tbody>

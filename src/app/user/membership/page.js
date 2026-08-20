@@ -380,7 +380,7 @@ export default function MembershipPage() {
                         size="lg"
                         className="rounded-full w-full md:w-auto"
                       >
-                        {purchasing ? 'Processing...' : 'Purchase with Wallet'}
+                        {purchasing ? 'Processing...' : 'Purchase with crypto Wallet'}
                       </Button>
                       <Button
                         onClick={() => handlePurchase('usd_commission')}
