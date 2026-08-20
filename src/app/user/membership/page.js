@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, erc20Abi, createWalletClient, custom } from 'viem'
-import { bscTestnet as bscTestnetViem } from 'viem/chains'
 import { motion } from 'framer-motion'
 import { getMyMembership, getMembershipHistory, purchaseMembership, verifyDeposit } from '@/lib/api'
+import { activeViemChain, chainIdHex, networkName, nativeSymbol, rpcUrl, blockExplorer } from '@/config'
 import { Button } from '@/components/ui/Button'
 import { Copy, Check, Crown, Clock, Wallet, CreditCard, History, Shield, X, LogOut, CheckCircle } from 'lucide-react'
 import Card from '@/components/ui/Card'
@@ -167,23 +167,23 @@ export default function MembershipPage() {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x61' }],
+          params: [{ chainId: chainIdHex }],
         })
       } catch (switchErr) {
         if (switchErr?.code === 4902) {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [{
-              chainId: '0x61',
-              chainName: 'BSC Testnet',
-              nativeCurrency: { name: 'BNB', symbol: 'tBNB', decimals: 18 },
-              rpcUrls: ['https://bsc-testnet-rpc.publicnode.com'],
-              blockExplorerUrls: ['https://testnet.bscscan.com'],
+              chainId: chainIdHex,
+              chainName: networkName,
+              nativeCurrency: { name: 'BNB', symbol: nativeSymbol, decimals: 18 },
+              rpcUrls: [rpcUrl],
+              blockExplorerUrls: [blockExplorer],
             }],
           })
           await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x61' }],
+            params: [{ chainId: chainIdHex }],
           })
         } else {
           throw switchErr
@@ -197,7 +197,7 @@ export default function MembershipPage() {
       }
 
       const client = createWalletClient({
-        chain: bscTestnetViem,
+        chain: activeViemChain,
         transport: custom(window.ethereum),
       })
 
@@ -214,7 +214,7 @@ export default function MembershipPage() {
     } catch (err) {
       const message = err?.message || 'Transaction failed or rejected'
       if (err?.code === 4902 || message?.includes('wallet_addEthereumChain')) {
-        setError('Please add BSC testnet network to MetaMask')
+        setError(`Please add ${networkName} network to MetaMask`)
       } else {
         setError(message)
       }

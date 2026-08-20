@@ -535,7 +535,7 @@ export default function WidgetBPage() {
                     </div>
                   </div>
                   <Button onClick={handlePay} disabled={isWriting || isConfirming || verifying} variant="primary" className="w-full rounded-full text-sm sm:text-base py-3">
-                    {isWriting ? 'Confirm in wallet...' : isConfirming ? 'Confirming...' : verifying ? 'Verifying...' : isConnected ? 'Pay with Wallet' : 'Connect Wallet & Pay'}
+                    {isWriting ? 'Confirm in wallet...' : isConfirming ? 'Confirming...' : verifying ? 'Verifying...' : isConnected ? 'Pay with Crypto Wallet' : 'Connect Wallet & Pay'}
                   </Button>
                 </div>
               )}

@@ -1,9 +1,8 @@
 'use client'
 
-import { wagmiAdapter, projectId } from '@/config'
+import { wagmiAdapter, projectId, activeNetwork } from '@/config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { bscTestnet } from '@reown/appkit/networks'
 import React, { useEffect } from 'react'
 import { cookieToInitialState, WagmiProvider } from 'wagmi'
 
@@ -31,8 +30,8 @@ try {
   modal = createAppKit({
     adapters: [wagmiAdapter],
     projectId,
-    networks: [bscTestnet],
-    defaultNetwork: bscTestnet,
+    networks: [activeNetwork],
+    defaultNetwork: activeNetwork,
     metadata: metadata,
     features: {
       analytics: true,
