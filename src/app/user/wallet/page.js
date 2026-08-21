@@ -417,8 +417,8 @@ export default function WalletPage() {
                         className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#B48811]"
                         required
                       >
-                        <option value="BSC">BSC</option>
-                        <option value="BEP20">BEP20</option>
+                        <option value="BSC">BEP-20</option>
+                        {/* <option value="BEP20">BEP20</option> */}
                       </select>
                     </div>
                     <div>

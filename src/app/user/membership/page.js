@@ -457,7 +457,7 @@ export default function MembershipPage() {
                     <p className='text-[#EBD197] font-semibold mb-2'>How to pay</p>
                     <ol className='text-sm text-slate-300 list-decimal list-inside space-y-1'>
                       <li>Click <strong className='text-white'>Connect Wallet and Pay</strong> below and choose a wallet (MetaMask, Trust Wallet, WalletConnect, etc).</li>
-                      <li>Make sure your wallet is on <strong className='text-white'>BSC Mainnet</strong> and has USDT.</li>
+                      <li>Make sure your wallet is on <strong className='text-white'>BSC Mainnet</strong> and has USDT(BEP-20).</li>
                       <li>Approve the exact <strong className='text-white'>{purchaseData.amountUsd} USDT</strong> transfer.</li>
                     </ol>
                     <p className='text-xs text-slate-400 mt-2'>

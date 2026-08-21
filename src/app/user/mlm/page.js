@@ -331,7 +331,8 @@ export default function MlmPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-white font-medium text-sm sm:text-base truncate">{sponsor.email}</p>
-                    <p className="text-slate-400 text-xs sm:text-sm">Your upline sponsor</p>
+                    {sponsor.username && <p className="text-slate-400 text-xs sm:text-sm">@{sponsor.username}</p>}
+                    {sponsor.referralCode && <p className="text-slate-500 text-xs">Upline ID: {sponsor.referralCode}</p>}
                   </div>
                 </div>
               ) : (

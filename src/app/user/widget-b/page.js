@@ -85,6 +85,11 @@ export default function WidgetBPage() {
   }, [isWriteError, writeError])
 
   useEffect(() => {
+    if (txHash && !manualTx) setManualTx(txHash)
+    if (address && !manualSender) setManualSender(address)
+  }, [txHash, address, manualTx, manualSender])
+
+  useEffect(() => {
     if (isConfirmed && txHash && pendingPayment && !verifying) {
       handleVerifyAuto(txHash, address)
     }
@@ -537,6 +542,42 @@ export default function WidgetBPage() {
                   <Button onClick={handlePay} disabled={isWriting || isConfirming || verifying} variant="primary" className="w-full rounded-full text-sm sm:text-base py-3">
                     {isWriting ? 'Confirm in wallet...' : isConfirming ? 'Confirming...' : verifying ? 'Verifying...' : isConnected ? 'Pay with Crypto Wallet' : 'Connect Wallet & Pay'}
                   </Button>
+
+                  <div className="mt-4 pt-4 border-t border-slate-700/50">
+                    <p className="text-slate-400 text-xs sm:text-sm mb-3">Or send manually and verify below:</p>
+                    <form onSubmit={handleVerifyManual} className="space-y-3">
+                      <div>
+                        <label className="block text-slate-400 text-xs sm:text-sm mb-1">Transaction Hash</label>
+                        <input
+                          type="text"
+                          value={manualTx}
+                          onChange={(e) => setManualTx(e.target.value)}
+                          placeholder="0x..."
+                          className="w-full px-3 sm:px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white text-sm focus:border-[#B48811] focus:outline-none transition-colors"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-400 text-xs sm:text-sm mb-1">Your Wallet Address (sender)</label>
+                        <input
+                          type="text"
+                          value={manualSender}
+                          onChange={(e) => setManualSender(e.target.value)}
+                          placeholder="0x..."
+                          className="w-full px-3 sm:px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white text-sm focus:border-[#B48811] focus:outline-none transition-colors"
+                          required
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        disabled={verifying || !manualTx || !manualSender}
+                        variant="outline"
+                        className="w-full rounded-full text-sm sm:text-base py-3"
+                      >
+                        {verifying ? 'Verifying...' : 'Verify Manual Deposit'}
+                      </Button>
+                    </form>
+                  </div>
                 </div>
               )}
             </Card>
