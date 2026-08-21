@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, erc20Abi, createWalletClient, custom } from 'viem'
 import { motion } from 'framer-motion'
-import { getMyMembership, getMembershipHistory, purchaseMembership, verifyDeposit } from '@/lib/api'
+import { getMyMembership, getMembershipHistory, getDepositWallet, purchaseMembership, verifyDeposit } from '@/lib/api'
 import { activeViemChain, chainIdHex, networkName, nativeSymbol, rpcUrl, blockExplorer } from '@/config'
 import { Button } from '@/components/ui/Button'
 import { Copy, Check, Crown, Clock, Wallet, CreditCard, History, Shield, X, LogOut, CheckCircle } from 'lucide-react'
@@ -33,13 +33,31 @@ export default function MembershipPage() {
   const [senderAddressManual, setSenderAddressManual] = useState('')
   const [copied, setCopied] = useState('')
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const autoVerifyKeyRef = useRef('')
 
   const fetchData = async () => {
     try {
-      const [m, h] = await Promise.all([getMyMembership(), getMembershipHistory()])
-      setMembership(m.success ? m.data : null)
+      const [m, h, dw] = await Promise.all([getMyMembership(), getMembershipHistory(), getDepositWallet()])
+      const membershipData = m.success ? m.data : null
+      const walletInfo = dw.success ? dw.data : null
+
+      setMembership(membershipData)
+
       const allHistory = h.success ? (h.data?.data || h.data || []) : []
-      setHistory(allHistory.filter((item) => item.status !== 'PENDING' && item.status !== 'FAILED'))
+      setHistory(allHistory)
+
+      if (membershipData && !membershipData.active && walletInfo) {
+        const pending = (membershipData.history || []).find((item) => item.status === 'PENDING')
+        if (pending?.payment?.id) {
+          setPurchaseData((current) => current || {
+            paymentId: pending.payment.id,
+            amountUsd: pending.amountUsd ?? pending.payment.amountUsd,
+            depositWallet: walletInfo.address,
+            usdtContract: walletInfo.usdtContract,
+            network: walletInfo.network,
+          })
+        }
+      }
     } catch (err) {
       setError(err.response?.data?.error?.message || err.message || 'Failed to load membership')
     } finally {
@@ -63,10 +81,18 @@ export default function MembershipPage() {
   }, [isWriteError, writeError])
 
   useEffect(() => {
-    if (isConfirmed && txHash && purchaseData && !verifying) {
+    if (isConfirmed && txHash && purchaseData) {
+      const key = `${purchaseData.paymentId}:${txHash}`
+      if (autoVerifyKeyRef.current === key) return
+      autoVerifyKeyRef.current = key
       handleVerifyAuto(txHash, address)
     }
-  }, [isConfirmed, txHash, purchaseData, address, verifying])
+  }, [isConfirmed, txHash, purchaseData, address])
+
+  useEffect(() => {
+    if (txHash && !txHashManual) setTxHashManual(txHash)
+    if (address && !senderAddressManual) setSenderAddressManual(address)
+  }, [txHash, address])
 
   const handleVerifyAuto = async (hash, sender) => {
     setVerifying(true)
@@ -431,11 +457,11 @@ export default function MembershipPage() {
                     <p className='text-[#EBD197] font-semibold mb-2'>How to pay</p>
                     <ol className='text-sm text-slate-300 list-decimal list-inside space-y-1'>
                       <li>Click <strong className='text-white'>Connect Wallet and Pay</strong> below and choose a wallet (MetaMask, Trust Wallet, WalletConnect, etc).</li>
-                      <li>Make sure your wallet is on <strong className='text-white'>BSC Testnet</strong> and has USDT.</li>
+                      <li>Make sure your wallet is on <strong className='text-white'>BSC Mainnet</strong> and has USDT.</li>
                       <li>Approve the exact <strong className='text-white'>{purchaseData.amountUsd} USDT</strong> transfer.</li>
                     </ol>
                     <p className='text-xs text-slate-400 mt-2'>
-                      Or manually send the exact amount to the address below from any BSC-Testnet wallet that supports BEP-20 USDT.
+                      Or manually send the exact amount to the address below from any BSC-Mainnet wallet that supports BEP-20 USDT.
                     </p>
                   </div>
 
@@ -503,7 +529,7 @@ export default function MembershipPage() {
                       </div>
                     )}
 
-                    {/* <div className="mt-6 pt-6 border-t border-slate-700/50">
+                    <div className="mt-6 pt-6 border-t border-slate-700/50">
                       <p className="text-slate-400 text-sm mb-4">Or send manually from your wallet, then verify below:</p>
                       <form onSubmit={handleVerifyManual} className="space-y-4">
                         <div>
@@ -538,7 +564,7 @@ export default function MembershipPage() {
                           {verifying ? 'Verifying...' : 'Verify Manual Deposit'}
                         </Button>
                       </form>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -620,7 +646,7 @@ export default function MembershipPage() {
                           )}
                           {item.payment?.transactionHash && (
                             <a
-                              href={`https://testnet.bscscan.com/tx/${item.payment.transactionHash}`}
+                              href={`${blockExplorer}/tx/${item.payment.transactionHash}`}
                               target="_blank"
                               rel="noreferrer"
                               className="inline-flex items-center gap-1 text-xs text-[#EBD197] hover:text-[#BB9B49] mt-1"

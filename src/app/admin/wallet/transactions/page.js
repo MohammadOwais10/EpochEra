@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { listAdminWalletTransactions } from '@/lib/api'
 import Card from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Wallet, ArrowRightLeft, AlertCircle } from 'lucide-react'
+import { Wallet, ArrowRightLeft, AlertCircle, Eye, X, User } from 'lucide-react'
 
 export default function AdminWalletTransactionsPage() {
   const router = useRouter()
@@ -16,6 +16,7 @@ export default function AdminWalletTransactionsPage() {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
   const [total, setTotal] = useState(0)
+  const [selectedTx, setSelectedTx] = useState(null)
 
   const totalPages = Math.ceil(total / limit) || 1
 
@@ -37,7 +38,17 @@ export default function AdminWalletTransactionsPage() {
       }
     }
     fetchData()
-  }, [page, limit])
+  }, [page, limit, router])
+
+  const formatValue = (value) => {
+    if (value === null || value === undefined) return '-'
+    if (typeof value === 'object') return JSON.stringify(value, null, 2)
+    return String(value)
+  }
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+  }
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center text-white">
@@ -94,43 +105,76 @@ export default function AdminWalletTransactionsPage() {
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <Card className="border-[#B48811]/30 overflow-hidden">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-800/50 border-b border-slate-700/50">
-              <tr>
-                <th className="p-4 text-slate-400 font-medium">Wallet</th>
-                <th className="p-4 text-slate-400 font-medium">Type</th>
-                <th className="p-4 text-slate-400 font-medium">Amount</th>
-                <th className="p-4 text-slate-400 font-medium">Status</th>
-                <th className="p-4 text-slate-400 font-medium">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.length === 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm min-w-[1100px]">
+              <thead className="bg-slate-800/50 border-b border-slate-700/50">
                 <tr>
-                  <td colSpan={5} className="p-8 text-slate-500 text-center">No transactions found.</td>
+                  <th className="p-4 text-slate-400 font-medium">User</th>
+                  <th className="p-4 text-slate-400 font-medium">Wallet</th>
+                  <th className="p-4 text-slate-400 font-medium">Type</th>
+                  <th className="p-4 text-slate-400 font-medium">Amount</th>
+                  <th className="p-4 text-slate-400 font-medium">Reference</th>
+                  <th className="p-4 text-slate-400 font-medium">Description</th>
+                  <th className="p-4 text-slate-400 font-medium">Date</th>
+                  <th className="p-4 text-slate-400 font-medium">Action</th>
                 </tr>
-              ) : (
-                transactions.map((tx, i) => (
-                  <tr key={i} className="border-t border-slate-700/30 hover:bg-slate-800/30 transition-colors">
-                    <td className="p-4 text-white">{tx.walletType}</td>
-                    <td className="p-4 text-slate-300">{tx.transactionType}</td>
-                    <td className="p-4 text-[#EBD197] font-medium">{tx.amount}</td>
-                    <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        tx.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                        tx.status === 'PENDING' ? 'bg-[#EBD197]/10 text-[#EBD197] border-[#B48811]/20' : 
-                        tx.status === 'FAILED' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
-                        'bg-slate-700/50 text-slate-300 border-slate-600/30'
-                      }`}>
-                        {tx.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-slate-300">{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : '-'}</td>
+              </thead>
+              <tbody>
+                {transactions.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="p-8 text-slate-500 text-center">No transactions found.</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  transactions.map((tx, i) => (
+                    <tr key={i} className="border-t border-slate-700/30 hover:bg-slate-800/30 transition-colors">
+                      <td className="p-4 min-w-[180px]">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-[#B48811]/10 flex items-center justify-center flex-shrink-0">
+                            <User className="w-4 h-4 text-[#EBD197]" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-white text-sm truncate" title={tx.user?.email}>
+                              {tx.user?.email || '-'}
+                            </p>
+                            {tx.user?.username && (
+                              <p className="text-slate-500 text-xs truncate">@{tx.user.username}</p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 text-white whitespace-nowrap">{tx.walletType}</td>
+                      <td className="p-4 text-slate-300 whitespace-nowrap">{tx.transactionType}</td>
+                      <td className="p-4 text-[#EBD197] font-medium whitespace-nowrap">{tx.amount}</td>
+                      <td className="p-4 text-slate-300 whitespace-nowrap">
+                        {tx.referenceType ? (
+                          <span className="text-xs">
+                            <span className="text-[#EBD197]">{tx.referenceType}</span>
+                            {tx.referenceId && (
+                              <span className="text-slate-500 ml-1">• {tx.referenceId.slice(0, 8)}...</span>
+                            )}
+                          </span>
+                        ) : '-'}
+                      </td>
+                      <td className="p-4 text-slate-300 max-w-[200px] truncate" title={tx.description}>
+                        {tx.description || '-'}
+                      </td>
+                      <td className="p-4 text-slate-300 whitespace-nowrap">{tx.createdAt ? new Date(tx.createdAt).toLocaleString() : '-'}</td>
+                      <td className="p-4 whitespace-nowrap">
+                        <Button
+                          onClick={() => setSelectedTx(tx)}
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </Card>
 
         {totalPages > 1 && (
@@ -157,6 +201,125 @@ export default function AdminWalletTransactionsPage() {
           </div>
         )}
       </motion.div>
+
+      {/* Transaction Details Modal */}
+      {selectedTx && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          onClick={() => setSelectedTx(null)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto border-[#B48811]/30 bg-slate-900">
+            <div className="p-6 border-b border-slate-700/50 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
+              <h2 className="text-xl font-bold text-white">Transaction Details</h2>
+              <button
+                onClick={() => setSelectedTx(null)}
+                className="p-2 rounded-lg hover:bg-slate-800/50 transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* User */}
+              <div>
+                <h3 className="text-sm font-semibold text-[#EBD197] uppercase tracking-wider mb-3">User</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
+                  <DetailRow label="Email" value={selectedTx.user?.email} />
+                  <DetailRow label="Username" value={selectedTx.user?.username} />
+                  <DetailRow label="User ID" value={selectedTx.user?.id} />
+                </div>
+              </div>
+
+              {/* Transaction */}
+              <div>
+                <h3 className="text-sm font-semibold text-[#EBD197] uppercase tracking-wider mb-3">Transaction</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
+                  <DetailRow label="Transaction ID" value={selectedTx.id} copyable />
+                  <DetailRow label="Wallet Type" value={selectedTx.walletType} />
+                  <DetailRow label="Transaction Type" value={selectedTx.transactionType} />
+                  <DetailRow label="Amount" value={selectedTx.amount} />
+                  <DetailRow label="Description" value={selectedTx.description} />
+                  <DetailRow label="Created At" value={selectedTx.createdAt ? new Date(selectedTx.createdAt).toLocaleString() : '-'} />
+                  <DetailRow label="Idempotency Key" value={selectedTx.idempotencyKey} copyable />
+                </div>
+              </div>
+
+              {/* Reference */}
+              <div>
+                <h3 className="text-sm font-semibold text-[#EBD197] uppercase tracking-wider mb-3">Reference</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
+                  <DetailRow label="Reference Type" value={selectedTx.referenceType} />
+                  <DetailRow label="Reference ID" value={selectedTx.referenceId} copyable />
+                </div>
+              </div>
+
+              {/* Balances */}
+              <div>
+                <h3 className="text-sm font-semibold text-[#EBD197] uppercase tracking-wider mb-3">Balance Impact</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
+                  <DetailRow label="Balance Before" value={selectedTx.balanceBefore} />
+                  <DetailRow label="Balance After" value={selectedTx.balanceAfter} />
+                  <DetailRow label="Available Before" value={selectedTx.availableBefore} />
+                  <DetailRow label="Available After" value={selectedTx.availableAfter} />
+                  <DetailRow label="Locked Before" value={selectedTx.lockedBefore} />
+                  <DetailRow label="Locked After" value={selectedTx.lockedAfter} />
+                </div>
+              </div>
+
+              {/* Metadata */}
+              {selectedTx.metadata && (
+                <div>
+                  <h3 className="text-sm font-semibold text-[#EBD197] uppercase tracking-wider mb-3">Metadata</h3>
+                  <pre className="bg-slate-950 rounded-xl p-4 border border-slate-700/30 text-slate-300 text-xs overflow-x-auto">
+                    {JSON.stringify(selectedTx.metadata, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-slate-700/50 flex justify-end sticky bottom-0 bg-slate-900 z-10">
+              <Button
+                onClick={() => router.push(`/admin/users/${selectedTx.userId}`)}
+                variant="outline"
+                size="sm"
+                className="rounded-full mr-2"
+              >
+                View User
+              </Button>
+              <Button
+                onClick={() => setSelectedTx(null)}
+                variant="primary"
+                size="sm"
+                className="rounded-full"
+              >
+                Close
+              </Button>
+            </div>
+            </Card>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DetailRow({ label, value, copyable }) {
+  const display = value === null || value === undefined ? '-' : String(value)
+  return (
+    <div>
+      <p className="text-slate-500 text-xs mb-1">{label}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-white text-sm break-all font-mono" title={display}>{display}</p>
+        {copyable && value && (
+          <button
+            onClick={() => navigator.clipboard.writeText(String(value))}
+            className="text-[#EBD197] hover:text-white text-xs"
+          >
+            Copy
+          </button>
+        )}
+      </div>
     </div>
   )
 }

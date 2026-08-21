@@ -268,6 +268,7 @@ export const updateAdminMiningContent = (id, data) => patch(`/admin/mining/conte
 export const deleteAdminMiningContent = (id) => del(`/admin/mining/content/${id}`);
 
 export const listAdminWalletTransactions = (query = '') => get(`/admin/wallet/transactions${query ? `?${query}` : ''}`);
+export const listAdminBlockchainTransactions = (query = '') => get(`/admin/blockchain/transactions${query ? `?${query}` : ''}`);
 export const adjustAdminWallet = (data) => post('/admin/wallet/adjust', data);
 
 export const getAdminDepositWallet = () => get('/admin/deposit-wallet');
